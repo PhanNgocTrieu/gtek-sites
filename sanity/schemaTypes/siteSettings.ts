@@ -18,6 +18,24 @@ export const siteSettings = defineType({
       validation: (Rule) => Rule.max(160),
     }),
     defineField({
+      name: "contactEmail",
+      title: "Contact page email",
+      type: "string",
+      description: "Email used for contact form submissions (overrides environment fallback).",
+      validation: (Rule) => Rule.email().max(160),
+    }),
+    defineField({
+      name: "themeColors",
+      title: "Theme colors",
+      type: "object",
+      fields: [
+        { name: "primary", title: "Primary color", type: "string" },
+        { name: "secondary", title: "Secondary color", type: "string" },
+        { name: "accent", title: "Accent color", type: "string" },
+      ],
+      options: { collapsible: true, collapsed: false },
+    }),
+    defineField({
       name: "phone",
       title: "Phone",
       type: "string",

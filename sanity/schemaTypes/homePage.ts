@@ -25,6 +25,31 @@ export const homePage = defineType({
       options: { hotspot: true },
     }),
     defineField({
+      name: "pageBackgroundType",
+      title: "Page background type",
+      type: "string",
+      options: {
+        list: [
+          { title: "None", value: "none" },
+          { title: "Color", value: "color" },
+          { title: "Image", value: "image" },
+        ],
+      },
+      initialValue: "none",
+    }),
+    defineField({
+      name: "pageBackgroundColor",
+      title: "Page background color",
+      type: "string",
+      description: "Hex or CSS color string used when background type is 'color'.",
+    }),
+    defineField({
+      name: "pageBackgroundImage",
+      title: "Page background image",
+      type: "image",
+      options: { hotspot: true },
+    }),
+    defineField({
       name: "heroCtaLabel",
       title: "Hero CTA label",
       type: "string",

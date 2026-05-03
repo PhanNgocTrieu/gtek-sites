@@ -5,6 +5,20 @@ export const deskStructure = (S: StructureBuilder) =>
     .title("GTek Content")
     .items([
       S.listItem()
+        .title("Shortcuts")
+        .child(
+          S.list()
+            .title("Shortcuts")
+            .items([
+              S.listItem()
+                .title("Edit Site Settings")
+                .child(S.document().schemaType("siteSettings").documentId("siteSettings")),
+              S.listItem()
+                .title("Edit Home Page")
+                .child(S.document().schemaType("homePage").documentId("homePage")),
+            ]),
+        ),
+      S.listItem()
         .title("Site Settings")
         .child(S.document().schemaType("siteSettings").documentId("siteSettings")),
       S.listItem().title("Home Page").child(S.document().schemaType("homePage").documentId("homePage")),
