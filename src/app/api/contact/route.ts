@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { getSanityClient } from "@/sanity/client";
 
 function isNonEmptyString(v: unknown): v is string {
   return typeof v === "string" && v.trim().length > 0;
@@ -40,10 +41,23 @@ export async function POST(req: Request) {
   const safeSubject = clamp(subject.trim(), 80);
 
   const apiKey = process.env.RESEND_API_KEY;
-  const toEmail = process.env.CONTACT_TO_EMAIL ?? "contact@gtekengineering.ca";
+  let toEmail = process.env.CONTACT_TO_EMAIL ?? "contact@gtekengineering.ca";
   const fromEmail = process.env.CONTACT_FROM_EMAIL ?? "GTek Website <onboarding@resend.dev>";
   const ackFromEmail = process.env.CONTACT_ACK_FROM_EMAIL ?? fromEmail;
   const sendAck = (process.env.CONTACT_SEND_ACK ?? "").toLowerCase() === "true";
+
+  // Try to resolve contact email from Sanity siteSettings if available
+  try {
+    const client = getSanityClient();
+    if (client) {
+      const siteSettings = await client.fetch(`*[_type=="siteSettings" && _id=="siteSettings"][0]{ contactEmail }`);
+      if (siteSettings?.contactEmail) {
+        toEmail = siteSettings.contactEmail;
+      }
+    }
+  } catch {
+    // ignore and fallback to env/default
+  }
 
   if (!apiKey) {
     return NextResponse.json(

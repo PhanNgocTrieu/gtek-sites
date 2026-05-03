@@ -15,6 +15,8 @@ export const metadata: Metadata = {
 type SiteSettings = {
   companyName?: string;
   sectors?: string[];
+  themeColors?: { primary?: string; secondary?: string; accent?: string };
+  contactEmail?: string;
 };
 
 type HomePage = {
@@ -29,6 +31,9 @@ type HomePage = {
   closingHeadline?: string;
   closingSubhead?: string;
   closingCtaLabel?: string;
+  pageBackgroundType?: string;
+  pageBackgroundColor?: string | null;
+  pageBackgroundImage?: string | null;
 };
 
 export default async function Home() {
@@ -45,6 +50,14 @@ export default async function Home() {
   const heroBackground =
     home?.heroBackground ??
     "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=2200&q=80";
+
+  const pageBackgroundType = home?.pageBackgroundType ?? "none";
+  const pageBackgroundColor = home?.pageBackgroundColor ?? null;
+  const pageBackgroundImage = home?.pageBackgroundImage ?? null;
+
+  const primaryColor = settings?.themeColors?.primary ?? "#0A74DA";
+  const secondaryColor = settings?.themeColors?.secondary ?? "#F5F5F5";
+  const accentColor = settings?.themeColors?.accent ?? "#FFB400";
 
   const servicesIntro =
     home?.servicesIntro ?? "Clear scope, senior-led delivery, and practical recommendations you can build with.";
@@ -105,13 +118,24 @@ export default async function Home() {
 
   return (
     <main>
-      <section className="relative overflow-hidden bg-gtek-navy text-white">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${heroBackground})`,
-          }}
-        />
+      <section
+        className="relative overflow-hidden text-white"
+        style={
+          pageBackgroundType === "color"
+            ? { backgroundColor: pageBackgroundColor ?? undefined }
+            : pageBackgroundType === "image"
+            ? { backgroundImage: `url(${pageBackgroundImage ?? heroBackground})`, backgroundSize: "cover", backgroundPosition: "center" }
+            : undefined
+        }
+      >
+        {pageBackgroundType === "none" ? (
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${heroBackground})`,
+            }}
+          />
+        ) : null}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/65 to-gtek-navy/90" />
         <div className="relative">
           <Section className="py-20 md:py-28">
@@ -124,10 +148,7 @@ export default async function Home() {
                 {heroSubhead}
               </p>
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center rounded-md bg-gtek-amber px-8 py-4 text-lg font-extrabold text-gtek-navy hover:bg-yellow-400 transition-colors"
-                >
+                <Link href="/contact" className="inline-flex items-center justify-center rounded-md px-8 py-4 text-lg font-extrabold text-gtek-navy hover:opacity-95 transition-all" style={{ backgroundColor: accentColor }}>
                   {heroCtaLabel}
                 </Link>
                 <Link

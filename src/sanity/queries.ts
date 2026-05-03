@@ -3,6 +3,7 @@ import { groq } from "next-sanity";
 export const siteSettingsQuery = groq`*[_type == "siteSettings" && _id == "siteSettings"][0]{
   companyName,
   generalEmail,
+  contactEmail,
   phone,
   officeHours,
   addressLines,
@@ -21,6 +22,10 @@ export const homePageQuery = groq`*[_type == "homePage" && _id == "homePage"][0]
   closingHeadline,
   closingSubhead,
   closingCtaLabel
+  ,
+  pageBackgroundType,
+  pageBackgroundColor,
+  "pageBackgroundImage": pageBackgroundImage.asset->url
 }`;
 
 export const aboutPageQuery = groq`*[_type == "aboutPage" && _id == "aboutPage"][0]{
