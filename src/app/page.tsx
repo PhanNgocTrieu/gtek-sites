@@ -55,8 +55,6 @@ export default async function Home() {
   const pageBackgroundColor = home?.pageBackgroundColor ?? null;
   const pageBackgroundImage = home?.pageBackgroundImage ?? null;
 
-  const primaryColor = settings?.themeColors?.primary ?? "#0A74DA";
-  const secondaryColor = settings?.themeColors?.secondary ?? "#F5F5F5";
   const accentColor = settings?.themeColors?.accent ?? "#FFB400";
 
   const servicesIntro =
