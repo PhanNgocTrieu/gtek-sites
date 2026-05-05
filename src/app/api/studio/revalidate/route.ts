@@ -5,12 +5,41 @@ import { SANITY_CACHE_TAG } from "@/sanity/fetch";
 
 const TOKEN_TTL_SECONDS = 120;
 
+function normalizeOrigin(value: string) {
+  try {
+    return new URL(value).origin;
+  } catch {
+    return "";
+  }
+}
+
+function buildAllowedOrigins(req: Request) {
+  const allowed = new Set<string>();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
+  const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "";
+  const requestOrigin = normalizeOrigin(req.url);
+  const forwardedHost = req.headers.get("x-forwarded-host");
+  const forwardedProto = req.headers.get("x-forwarded-proto") || "https";
+  const forwardedOrigin = forwardedHost ? normalizeOrigin(`${forwardedProto}://${forwardedHost}`) : "";
+
+  for (const value of [siteUrl, vercelUrl, requestOrigin, forwardedOrigin]) {
+    const normalized = normalizeOrigin(value);
+    if (normalized) allowed.add(normalized);
+  }
+
+  return allowed;
+}
+
 function sameOriginAllowed(req: Request) {
-  const origin = req.headers.get("origin") || "";
+  const origin = normalizeOrigin(req.headers.get("origin") || "");
   const referer = req.headers.get("referer") || "";
-  const site = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  if (origin && origin === site) return true;
-  if (referer && referer.startsWith(site)) return true;
+  const allowedOrigins = buildAllowedOrigins(req);
+
+  if (origin && allowedOrigins.has(origin)) return true;
+  if (referer) {
+    const refererOrigin = normalizeOrigin(referer);
+    if (refererOrigin && allowedOrigins.has(refererOrigin)) return true;
+  }
   if (process.env.NODE_ENV !== "production") {
     if (origin && origin.startsWith("http://localhost")) return true;
     if (referer && referer.startsWith("http://localhost")) return true;
