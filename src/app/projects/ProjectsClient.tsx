@@ -66,15 +66,15 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           <Badge>Projects</Badge>
-          <p className="text-sm text-slate-600">
-            Showing <span className="font-semibold text-slate-900">{filtered.length}</span> projects
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Showing <span className="font-semibold text-slate-900 dark:text-slate-200">{filtered.length}</span> projects
           </p>
         </div>
         <div className="sm:hidden">
-          <label className="text-sm font-semibold text-slate-700">
+          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
             Category
             <select
-              className="mt-2 block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm"
+              className="mt-2 block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
               value={active}
               onChange={(e) => setActive(e.target.value as (typeof categories)[number])}
             >
@@ -106,7 +106,7 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
               ) : (
                 <div className="h-full w-full flex items-center justify-center">
                   <div className="text-center px-6">
-                    <p className="text-sm font-semibold text-slate-700">Project image</p>
+                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Project image</p>
                     <p className="mt-1 text-xs text-slate-500">16:9 landscape</p>
                   </div>
                 </div>
@@ -115,12 +115,12 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
             <div className="p-6">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Project</p>
-                <span className="inline-flex items-center rounded-full bg-gtek-navy/10 px-3 py-1 text-xs font-semibold text-gtek-navy">
+                <span className="inline-flex items-center rounded-full bg-gtek-navy/10 px-3 py-1 text-xs font-semibold text-gtek-navy dark:bg-slate-800 dark:text-slate-300">
                   {p.sector}
                 </span>
               </div>
-              <h3 className="mt-3 text-lg font-extrabold text-slate-900 leading-snug">{p.title}</h3>
-              <div className="mt-3 space-y-1 text-sm text-slate-700">
+              <h3 className="mt-3 text-lg font-extrabold text-slate-900 leading-snug dark:text-slate-200">{p.title}</h3>
+              <div className="mt-3 space-y-1 text-sm text-slate-700 dark:text-slate-400">
                 {p.client ? (
                   <p>
                     <span className="font-semibold">Client:</span> {p.client}
@@ -132,8 +132,8 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                   </p>
                 ) : null}
               </div>
-              <p className="mt-4 text-sm text-slate-600 leading-relaxed">{p.scope}</p>
-              {p.attribution ? <p className="mt-4 text-xs text-slate-500">{p.attribution}</p> : null}
+              <p className="mt-4 text-sm text-slate-600 leading-relaxed dark:text-slate-400">{p.scope}</p>
+              {p.attribution ? <p className="mt-4 text-xs text-slate-500 dark:text-slate-500">{p.attribution}</p> : null}
             </div>
           </Card>
         ))}

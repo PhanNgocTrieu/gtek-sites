@@ -52,43 +52,43 @@ export default function ContactForm() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <label className="text-sm font-semibold text-slate-700">
+        <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
           Name
           <input
             name="name"
             required
-            className="mt-2 block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gtek-amber"
+            className="mt-2 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gtek-amber/70 focus:ring-2 focus:ring-gtek-amber/60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
             placeholder="Your name"
           />
         </label>
-        <label className="text-sm font-semibold text-slate-700">
+        <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
           Company
           <input
             name="company"
-            className="mt-2 block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gtek-amber"
+            className="mt-2 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gtek-amber/70 focus:ring-2 focus:ring-gtek-amber/60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
             placeholder="Company (optional)"
           />
         </label>
       </div>
 
-      <label className="text-sm font-semibold text-slate-700 block">
+      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
         Email
         <input
           name="email"
           type="email"
           required
-          className="mt-2 block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gtek-amber"
+          className="mt-2 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gtek-amber/70 focus:ring-2 focus:ring-gtek-amber/60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
           placeholder="you@company.com"
         />
       </label>
 
-      <label className="text-sm font-semibold text-slate-700 block">
+      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
         Subject
         <select
           name="subject"
           required
           defaultValue=""
-          className="mt-2 block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gtek-amber"
+          className="mt-2 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gtek-amber/70 focus:ring-2 focus:ring-gtek-amber/60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
         >
           <option value="" disabled>
             Select a subject…
@@ -101,22 +101,22 @@ export default function ContactForm() {
         </select>
       </label>
 
-      <label className="text-sm font-semibold text-slate-700 block">
+      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
         Message
         <textarea
           name="message"
           required
           rows={5}
-          className="mt-2 block w-full resize-y rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gtek-amber"
+          className="mt-2 block w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gtek-amber/70 focus:ring-2 focus:ring-gtek-amber/60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
           placeholder="Tell us about your project, timeline, and any site constraints."
         />
       </label>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <button
           type="submit"
           disabled={!canSubmit}
-          className="inline-flex items-center justify-center rounded-md bg-gtek-amber px-6 py-3 text-base font-bold text-gtek-navy transition-colors hover:bg-yellow-400 disabled:opacity-60"
+          className="inline-flex items-center justify-center rounded-full bg-gtek-amber px-6 py-3 text-base font-bold text-gtek-navy transition-colors hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {state.status === "submitting" ? "Sending..." : "Send Message"}
         </button>

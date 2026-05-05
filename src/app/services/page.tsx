@@ -74,32 +74,32 @@ export default async function ServicesPage() {
 
   return (
     <main>
-      <Section className="py-14 bg-slate-50">
+      <Section className="bg-gradient-to-b from-slate-50 to-white py-16 dark:from-slate-900 dark:to-slate-950">
         <div className="max-w-4xl">
           <Badge>Services</Badge>
-          <h1 className="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight text-gtek-navy">
+          <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-gtek-navy dark:text-slate-200 md:text-5xl">
             Practical, field-ready services
           </h1>
-          <p className="mt-5 text-lg text-slate-600 leading-relaxed">
+          <p className="mt-5 text-lg text-slate-600 leading-relaxed dark:text-slate-400">
             GTek supports owners, engineers, and contractors with geotechnical consulting, dam safety support,
             project administration, and materials testing.
           </p>
         </div>
       </Section>
 
-      <Section className="py-14 bg-white">
+      <Section className="bg-white py-14 dark:bg-slate-950">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {(sanityGroups ?? serviceGroups).map((group) => (
-            <Card key={group.title} className="p-6">
+            <Card key={group.title} className="p-6 hover:-translate-y-1 hover:shadow-md">
               <details className="group">
                 <summary className="cursor-pointer list-none select-none flex items-start justify-between gap-4">
                   <div>
-                    <h2 className="text-xl font-bold text-gtek-navy">{group.title}</h2>
-                    <p className="mt-1 text-sm text-slate-600">{group.items.length} offerings</p>
+                    <h2 className="text-xl font-bold text-gtek-navy dark:text-slate-200">{group.title}</h2>
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{group.items.length} offerings</p>
                   </div>
                   <span
                     aria-hidden="true"
-                    className="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-700 transition-transform group-open:rotate-180"
+                    className="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-700 transition-transform group-open:rotate-180 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400"
                   >
                     <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
                       <path
@@ -111,7 +111,7 @@ export default async function ServicesPage() {
                   </span>
                 </summary>
                 <div className="mt-5">
-                  <ul className="space-y-2 text-sm text-slate-700">
+                  <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-400">
                     {group.items.map((item) => (
                       <li key={item} className="flex gap-3">
                         <span className="mt-1 h-2 w-2 rounded-full bg-gtek-amber shrink-0" />

@@ -4,6 +4,20 @@ export const aboutPage = defineType({
   name: "aboutPage",
   title: "About Page",
   type: "document",
+  preview: {
+    select: {
+      narrative: "narrative",
+      teamMembers: "teamMembers",
+    },
+    prepare({ narrative, teamMembers }) {
+      const paragraphs = Array.isArray(narrative) ? narrative.filter(Boolean).length : 0;
+      const members = Array.isArray(teamMembers) ? teamMembers.filter(Boolean).length : 0;
+      return {
+        title: "About Page",
+        subtitle: `${paragraphs} narrative paragraph(s) • ${members} team member(s)`,
+      };
+    },
+  },
   fields: [
     defineField({
       name: "narrative",

@@ -170,17 +170,17 @@ export default async function Home() {
         </div>
       </section>
 
-      <Section className="py-14 bg-white">
+      <Section className="bg-white py-14 dark:bg-slate-950">
         <div className="max-w-5xl">
-          <h2 className="text-3xl font-extrabold tracking-tight text-gtek-navy">Services</h2>
-          <p className="mt-3 text-slate-600 leading-relaxed">
+          <h2 className="text-3xl font-extrabold tracking-tight text-gtek-navy dark:text-slate-200">Services</h2>
+          <p className="mt-3 text-slate-600 leading-relaxed dark:text-slate-400">
             {servicesIntro}
           </p>
         </div>
 
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {serviceCards.slice(0, 4).map((s) => (
-            <Card key={s.title} className="p-6 hover:shadow-md transition-shadow">
+            <Card key={s.title} className="p-6 hover:-translate-y-1 hover:shadow-lg">
               <div className="flex items-start gap-4">
                 <div className="mt-0.5 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-gtek-navy text-white">
                   <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -189,8 +189,8 @@ export default async function Home() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-extrabold text-slate-900">{s.title}</h3>
-                  <p className="mt-2 text-sm text-slate-600 leading-relaxed">{s.description}</p>
+                  <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-200">{s.title}</h3>
+                  <p className="mt-2 text-sm text-slate-600 leading-relaxed dark:text-slate-400">{s.description}</p>
                 </div>
               </div>
             </Card>
@@ -198,25 +198,25 @@ export default async function Home() {
         </div>
       </Section>
 
-      <Section className="py-14 bg-slate-50">
+      <Section className="bg-slate-50 py-14 dark:bg-slate-900">
         <div className="max-w-5xl">
-          <h2 className="text-3xl font-extrabold tracking-tight text-gtek-navy">Why GTek</h2>
-          <p className="mt-3 text-slate-600 leading-relaxed">
+          <h2 className="text-3xl font-extrabold tracking-tight text-gtek-navy dark:text-slate-200">Why GTek</h2>
+          <p className="mt-3 text-slate-600 leading-relaxed dark:text-slate-400">
             {whyIntro}
           </p>
         </div>
         <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
           {whyItems.slice(0, 3).map((v) => (
-            <Card key={v.title} className="p-6">
-              <h3 className="text-lg font-extrabold text-slate-900">{v.title}</h3>
-              <p className="mt-3 text-sm text-slate-700 leading-relaxed">{v.body}</p>
+            <Card key={v.title} className="p-6 hover:-translate-y-1 hover:shadow-md">
+              <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-200">{v.title}</h3>
+              <p className="mt-3 text-sm text-slate-700 leading-relaxed dark:text-slate-400">{v.body}</p>
             </Card>
           ))}
         </div>
       </Section>
 
-      <Section className="py-10 bg-white">
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm font-semibold text-slate-600">
+      <Section className="bg-white py-8 dark:bg-slate-950">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm font-semibold text-slate-600 dark:text-slate-400">
           <span className="text-slate-400">Sectors served:</span>
           {sectors.map((s, idx) => (
             <span key={s} className="inline-flex items-center gap-3">
@@ -227,11 +227,11 @@ export default async function Home() {
         </div>
       </Section>
 
-      <Section className="py-14 bg-gtek-navy">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <Section className="bg-gtek-navy py-14">
+        <div className="flex flex-col items-start justify-between gap-6 rounded-2xl border border-white/10 bg-white/5 p-8 md:flex-row md:items-center">
           <div className="max-w-2xl">
-            <h2 className="text-3xl font-extrabold tracking-tight text-white">{closingHeadline}</h2>
-            <p className="mt-3 text-slate-200 leading-relaxed">
+            <h2 className="text-3xl font-extrabold tracking-tight text-slate-200">{closingHeadline}</h2>
+            <p className="mt-3 text-slate-300 leading-relaxed">
               {closingSubhead}
             </p>
           </div>

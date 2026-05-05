@@ -76,10 +76,10 @@ export default async function AboutPage() {
 
   return (
     <main>
-      <Section className="py-14 bg-slate-50">
+      <Section className="bg-gradient-to-b from-slate-50 to-white py-16 dark:from-slate-900 dark:to-slate-950">
         <div className="max-w-4xl">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gtek-navy">About GTek</h1>
-          <div className="mt-6 space-y-4 text-slate-700 leading-relaxed">
+          <h1 className="text-4xl font-extrabold tracking-tight text-gtek-navy dark:text-slate-200 md:text-5xl">About GTek</h1>
+          <div className="mt-6 space-y-4 text-slate-700 leading-relaxed dark:text-slate-400">
             {narrative.map((p, idx) => (
               <p key={idx}>{p}</p>
             ))}
@@ -87,17 +87,17 @@ export default async function AboutPage() {
         </div>
       </Section>
 
-      <Section className="py-14 bg-white">
+      <Section className="bg-white py-14 dark:bg-slate-950">
         <div className="max-w-5xl">
-          <h2 className="text-3xl font-extrabold tracking-tight text-gtek-navy">Team</h2>
-          <p className="mt-3 text-slate-600 leading-relaxed">
+          <h2 className="text-3xl font-extrabold tracking-tight text-gtek-navy dark:text-slate-200">Team</h2>
+          <p className="mt-3 text-slate-600 leading-relaxed dark:text-slate-400">
             Clients hire people, not logos. Meet the team leading GTek’s technical delivery.
           </p>
         </div>
 
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {team.map((p) => (
-            <Card key={p.name} className="overflow-hidden">
+            <Card key={p.name} className="overflow-hidden hover:-translate-y-1 hover:shadow-md">
               <div className="aspect-square w-full bg-gradient-to-br from-slate-100 to-slate-200">
                 {p.photo ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -105,28 +105,28 @@ export default async function AboutPage() {
                 ) : (
                   <div className="h-full w-full flex items-center justify-center">
                     <div className="text-center px-6">
-                      <p className="text-sm font-semibold text-slate-700">Headshot</p>
+                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Headshot</p>
                       <p className="mt-1 text-xs text-slate-500">300×300 square crop</p>
                     </div>
                   </div>
                 )}
               </div>
               <div className="p-6">
-                <p className="text-base font-extrabold text-slate-900 leading-snug">{p.name}</p>
-                <p className="mt-1 text-sm font-semibold text-gtek-navy">{p.title}</p>
+                <p className="text-base font-extrabold text-slate-900 leading-snug dark:text-slate-200">{p.name}</p>
+                <p className="mt-1 text-sm font-semibold text-gtek-navy dark:text-slate-300">{p.title}</p>
                 {p.credentials ? (
                   <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-500">{p.credentials}</p>
                 ) : null}
-                <p className="mt-3 text-sm text-slate-700 leading-relaxed">{p.bio}</p>
+                <p className="mt-3 text-sm text-slate-700 leading-relaxed dark:text-slate-400">{p.bio}</p>
               </div>
             </Card>
           ))}
         </div>
 
         <div className="mt-12">
-          <Card className="p-6 bg-slate-50">
-            <h3 className="text-lg font-extrabold text-slate-900">Credentials & affiliations</h3>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
+          <Card className="bg-slate-50 p-6 dark:bg-slate-900">
+            <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-200">Credentials & affiliations</h3>
+            <p className="mt-3 text-sm text-slate-700 leading-relaxed dark:text-slate-400">
               {affiliations.join(" • ")}
             </p>
           </Card>

@@ -60,29 +60,29 @@ export default async function ProjectsPage() {
   const cmsEnabled = isSanityConfigured();
   return (
     <main>
-      <Section className="py-14 bg-slate-50">
+      <Section className="bg-gradient-to-b from-slate-50 to-white py-16 dark:from-slate-900 dark:to-slate-950">
         <div className="max-w-4xl">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gtek-navy">Project Experience</h1>
-          <p className="mt-5 text-lg text-slate-600 leading-relaxed">
+          <h1 className="text-4xl font-extrabold tracking-tight text-gtek-navy dark:text-slate-200 md:text-5xl">Project Experience</h1>
+          <p className="mt-5 text-lg text-slate-600 leading-relaxed dark:text-slate-400">
             Representative examples that demonstrate capability through personnel experience—presented with clear role
             attribution where projects were delivered at previous firms.
           </p>
           <div className="mt-8">
-            <Card className="p-5 bg-white">
-              <p className="text-sm text-slate-700 leading-relaxed">
+            <Card className="bg-white p-5 shadow-sm dark:bg-slate-900">
+              <p className="text-sm text-slate-700 leading-relaxed dark:text-slate-400">
                 <span className="font-semibold">No-code updates:</span> Add or edit projects in the content editor and
                 they appear here automatically.
               </p>
               <div className="mt-3 flex flex-col sm:flex-row gap-3">
                 <Link
                   href="/studio"
-                  className="inline-flex items-center justify-center rounded-md bg-gtek-navy px-5 py-2.5 text-sm font-bold text-white hover:bg-gtek-navy/95"
+                  className="inline-flex items-center justify-center rounded-full bg-gtek-navy px-5 py-2.5 text-sm font-bold text-white hover:bg-gtek-navy/95"
                 >
                   Open Content Editor
                 </Link>
                 <Link
                   href="/editing"
-                  className="inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-5 py-2.5 text-sm font-bold text-slate-900 hover:bg-slate-50"
+                  className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-bold text-slate-900 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
                 >
                   How to add a project
                 </Link>
@@ -97,7 +97,7 @@ export default async function ProjectsPage() {
         </div>
       </Section>
 
-      <Section className="py-14 bg-white">
+      <Section className="bg-white py-14 dark:bg-slate-950">
         <ProjectsClient initialProjects={sanityProjects?.length ? sanityProjects : [...mockProjects]} />
       </Section>
     </main>
