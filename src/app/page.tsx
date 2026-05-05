@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import Section from "@/components/ui/Section";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
-import { sanityFetch } from "@/sanity/fetch";
 import { homePageQuery, siteSettingsQuery } from "@/sanity/queries";
 
 export const metadata: Metadata = {
@@ -37,9 +36,19 @@ type HomePage = {
 };
 
 export default async function Home() {
+  const { cookies } = await import("next/headers");
+  const cookieStore = cookies();
+  const preview = cookieStore.get("sanityPreview")?.value;
+
+  const fetchModule = await import("@/sanity/fetch");
+
   const [home, settings] = await Promise.all([
-    sanityFetch<HomePage>(homePageQuery, {}, 60),
-    sanityFetch<SiteSettings>(siteSettingsQuery, {}, 300),
+    preview
+      ? fetchModule.sanityFetchDraft<HomePage>(homePageQuery, {}, 0)
+      : fetchModule.sanityFetchPublished<HomePage>(homePageQuery, {}, 60),
+    preview
+      ? fetchModule.sanityFetchDraft<SiteSettings>(siteSettingsQuery, {}, 0)
+      : fetchModule.sanityFetchPublished<SiteSettings>(siteSettingsQuery, {}, 60),
   ]);
 
   const heroHeadline = home?.heroHeadline ?? "Geotechnical engineering grounded in experience.";

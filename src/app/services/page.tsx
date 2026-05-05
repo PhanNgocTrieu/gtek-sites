@@ -1,7 +1,6 @@
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import Section from "@/components/ui/Section";
-import { sanityFetch } from "@/sanity/fetch";
 import { serviceGroupsQuery } from "@/sanity/queries";
 import type { Metadata } from "next";
 
@@ -64,7 +63,14 @@ const serviceGroups = [
 ] as const;
 
 export default async function ServicesPage() {
-  const sanityGroups = await sanityFetch<Array<{ title: string; items: string[] }>>(serviceGroupsQuery, {}, 60);
+  const { cookies } = await import("next/headers");
+  const cookieStore = cookies();
+  const preview = cookieStore.get("sanityPreview")?.value;
+
+  const fetchModule = await import("@/sanity/fetch");
+  const sanityGroups = preview
+    ? await fetchModule.sanityFetchDraft<Array<{ title: string; items: string[] }>>(serviceGroupsQuery, {}, 0)
+    : await fetchModule.sanityFetchPublished<Array<{ title: string; items: string[] }>>(serviceGroupsQuery, {}, 60);
 
   return (
     <main>

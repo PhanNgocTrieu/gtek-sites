@@ -1,7 +1,6 @@
 import Section from "@/components/ui/Section";
 import Card from "@/components/ui/Card";
 import type { Metadata } from "next";
-import { sanityFetch } from "@/sanity/fetch";
 import { aboutPageQuery } from "@/sanity/queries";
 
 export const metadata: Metadata = {
@@ -23,7 +22,14 @@ type AboutPageDoc = {
 };
 
 export default async function AboutPage() {
-  const about = await sanityFetch<AboutPageDoc>(aboutPageQuery, {}, 120);
+  const { cookies } = await import("next/headers");
+  const cookieStore = cookies();
+  const preview = cookieStore.get("sanityPreview")?.value;
+
+  const fetchModule = await import("@/sanity/fetch");
+  const about = preview
+    ? await fetchModule.sanityFetchDraft<AboutPageDoc>(aboutPageQuery, {}, 0)
+    : await fetchModule.sanityFetchPublished<AboutPageDoc>(aboutPageQuery, {}, 120);
   const narrative =
     about?.narrative?.length
       ? about.narrative

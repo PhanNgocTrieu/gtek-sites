@@ -1,6 +1,7 @@
 import { isSanityConfigured } from "@/sanity/env";
 import Section from "@/components/ui/Section";
-import Studio from "@/app/studio/Studio";
+import nextDynamic from "next/dynamic";
+const Studio = nextDynamic(() => import("@/app/studio/Studio"), { ssr: false });
 
 export const dynamic = "force-dynamic";
 

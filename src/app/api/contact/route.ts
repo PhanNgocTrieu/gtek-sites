@@ -48,7 +48,8 @@ export async function POST(req: Request) {
 
   // Try to resolve contact email from Sanity siteSettings if available
   try {
-    const client = getSanityClient();
+    // Use CDN-backed client for published settings to reduce latency for public email send path.
+    const client = getSanityClient({ useCdn: true });
     if (client) {
       const siteSettings = await client.fetch(`*[_type=="siteSettings" && _id=="siteSettings"][0]{ contactEmail }`);
       if (siteSettings?.contactEmail) {

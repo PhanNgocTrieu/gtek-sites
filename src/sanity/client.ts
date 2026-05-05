@@ -1,20 +1,30 @@
 import { createClient } from "next-sanity";
 import { sanityConfig } from "@/sanity/env";
 
-let _client: ReturnType<typeof createClient> | null = null;
+const _clients: Record<string, ReturnType<typeof createClient>> = {};
 
-export function getSanityClient() {
+function clientCacheKey(useCdn: boolean) {
+  return `${sanityConfig.projectId}__${sanityConfig.dataset}__${useCdn ? "cdn" : "nocdn"}`;
+}
+
+export function getSanityClient(opts?: { useCdn?: boolean }) {
+  const useCdn = typeof opts?.useCdn === "boolean" ? opts!.useCdn : sanityConfig.useCdn;
+
   if (!sanityConfig.projectId || !sanityConfig.dataset) return null;
-  if (_client) return _client;
 
-  _client = createClient({
+  const key = clientCacheKey(useCdn);
+  if (_clients[key]) return _clients[key];
+
+  const client = createClient({
     projectId: sanityConfig.projectId,
     dataset: sanityConfig.dataset,
     apiVersion: sanityConfig.apiVersion,
-    useCdn: sanityConfig.useCdn,
+    useCdn,
     token: sanityConfig.token,
   });
 
-  return _client;
+  _clients[key] = client;
+
+  return client;
 }
 

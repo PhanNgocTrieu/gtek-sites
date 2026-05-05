@@ -1,6 +1,5 @@
 import Section from "@/components/ui/Section";
 import ProjectsClient, { type Project } from "@/app/projects/ProjectsClient";
-import { sanityFetch } from "@/sanity/fetch";
 import { projectsQuery } from "@/sanity/queries";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -50,7 +49,14 @@ const mockProjects: Project[] = [
 ] as const;
 
 export default async function ProjectsPage() {
-  const sanityProjects = await sanityFetch<Project[]>(projectsQuery, {}, 60);
+  const { cookies } = await import("next/headers");
+  const cookieStore = cookies();
+  const preview = cookieStore.get("sanityPreview")?.value;
+
+  const fetchModule = await import("@/sanity/fetch");
+  const sanityProjects = preview
+    ? await fetchModule.sanityFetchDraft<Project[]>(projectsQuery, {}, 0)
+    : await fetchModule.sanityFetchPublished<Project[]>(projectsQuery, {}, 60);
   const cmsEnabled = isSanityConfigured();
   return (
     <main>

@@ -3,7 +3,6 @@ import Card from "@/components/ui/Card";
 import Section from "@/components/ui/Section";
 import ContactForm from "@/app/contact/ContactForm";
 import type { Metadata } from "next";
-import { sanityFetch } from "@/sanity/fetch";
 import { siteSettingsQuery } from "@/sanity/queries";
 
 export const metadata: Metadata = {
@@ -21,7 +20,14 @@ type SiteSettings = {
 };
 
 export default async function ContactPage() {
-  const settings = await sanityFetch<SiteSettings>(siteSettingsQuery, {}, 300);
+  const { cookies } = await import("next/headers");
+  const cookieStore = cookies();
+  const preview = cookieStore.get("sanityPreview")?.value;
+
+  const fetchModule = await import("@/sanity/fetch");
+  const settings = preview
+    ? await fetchModule.sanityFetchDraft<SiteSettings>(siteSettingsQuery, {}, 0)
+    : await fetchModule.sanityFetchPublished<SiteSettings>(siteSettingsQuery, {}, 60);
   const companyName = settings?.companyName ?? "GTek Engineering Inc.";
   const generalEmail = settings?.generalEmail ?? "info@gtek.ca";
   const phone = settings?.phone ?? "[office phone]";
