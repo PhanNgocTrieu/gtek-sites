@@ -1,7 +1,7 @@
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import Section from "@/components/ui/Section";
-import { serviceGroupsQuery } from "@/sanity/queries";
+import { serviceGroupsQuery, siteSettingsQuery } from "@/sanity/queries";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -72,6 +72,9 @@ export default async function ServicesPage() {
   const preview = cookieStore.get("sanityPreview")?.value;
 
   const fetchModule = await import("@/sanity/fetch");
+  const settings = preview
+    ? await fetchModule.sanityFetchDraft<{ servicesHeroBackground?: string }>(siteSettingsQuery, {}, 0)
+    : await fetchModule.sanityFetchPublished<{ servicesHeroBackground?: string }>(siteSettingsQuery, {}, 60);
   const sanityGroups = preview
     ? await fetchModule.sanityFetchDraft<
         Array<{
@@ -111,6 +114,7 @@ export default async function ServicesPage() {
         {},
         60,
       );
+  const servicesHeroBackground = settings?.servicesHeroBackground;
 
   const groups = (sanityGroups ?? serviceGroups)
     .filter((group): group is NonNullable<typeof group> => Boolean(group))
@@ -134,8 +138,14 @@ export default async function ServicesPage() {
 
   return (
     <main>
-      <Section className="bg-gradient-to-b from-slate-50 to-white py-16 dark:from-slate-900 dark:to-slate-950">
-        <div className="max-w-4xl">
+      <Section className={`py-16 ${servicesHeroBackground ? "relative overflow-hidden" : "bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950"}`}>
+        {servicesHeroBackground ? (
+          <>
+            <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${servicesHeroBackground}')` }} aria-hidden />
+            <div className="absolute inset-0 bg-white/75 dark:bg-slate-950/75" aria-hidden />
+          </>
+        ) : null}
+        <div className={`max-w-4xl ${servicesHeroBackground ? "relative" : ""}`}>
           <Badge>Services</Badge>
           <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-gtek-navy dark:text-slate-200 md:text-5xl">
             Practical, field-ready services

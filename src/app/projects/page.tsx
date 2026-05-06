@@ -1,6 +1,6 @@
 import Section from "@/components/ui/Section";
 import ProjectsClient, { type Project } from "@/app/projects/ProjectsClient";
-import { projectsQuery } from "@/sanity/queries";
+import { projectsQuery, siteSettingsQuery } from "@/sanity/queries";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Card from "@/components/ui/Card";
@@ -54,14 +54,24 @@ export default async function ProjectsPage() {
   const preview = cookieStore.get("sanityPreview")?.value;
 
   const fetchModule = await import("@/sanity/fetch");
+  const settings = preview
+    ? await fetchModule.sanityFetchDraft<{ projectsHeroBackground?: string }>(siteSettingsQuery, {}, 0)
+    : await fetchModule.sanityFetchPublished<{ projectsHeroBackground?: string }>(siteSettingsQuery, {}, 60);
   const sanityProjects = preview
     ? await fetchModule.sanityFetchDraft<Project[]>(projectsQuery, {}, 0)
     : await fetchModule.sanityFetchPublished<Project[]>(projectsQuery, {}, 60);
   const cmsEnabled = isSanityConfigured();
+  const projectsHeroBackground = settings?.projectsHeroBackground;
   return (
     <main>
-      <Section className="bg-gradient-to-b from-slate-50 to-white py-16 dark:from-slate-900 dark:to-slate-950">
-        <div className="max-w-4xl">
+      <Section className={`py-16 ${projectsHeroBackground ? "relative overflow-hidden" : "bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950"}`}>
+        {projectsHeroBackground ? (
+          <>
+            <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${projectsHeroBackground}')` }} aria-hidden />
+            <div className="absolute inset-0 bg-white/75 dark:bg-slate-950/75" aria-hidden />
+          </>
+        ) : null}
+        <div className={`max-w-4xl ${projectsHeroBackground ? "relative" : ""}`}>
           <h1 className="text-4xl font-extrabold tracking-tight text-gtek-navy dark:text-slate-200 md:text-5xl">Project Experience</h1>
           <p className="mt-5 text-lg text-slate-600 leading-relaxed dark:text-slate-400">
             Representative examples that demonstrate capability through personnel experience—presented with clear role

@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 };
 
 type AboutPageDoc = {
+  heroBackgroundImage?: string;
   narrativeItems?: Array<{
     title: string;
     subtitle: string;
@@ -95,20 +96,29 @@ export default async function AboutPage() {
     about?.affiliations?.length
       ? about.affiliations
       : ["Engineers Geoscientists Manitoba", "Canadian Dam Association", "Canadian Geotechnical Society"];
+  const heroBackgroundImage = about?.heroBackgroundImage ?? "/images/about-hero.jpg";
 
   return (
     <main>
-      <Section className="bg-gradient-to-b from-slate-50 to-white py-16 dark:from-slate-900 dark:to-slate-950">
-        <div className="max-w-4xl">
+      <Section className="relative overflow-hidden py-16">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url('${heroBackgroundImage}')` }}
+          aria-hidden
+        />
+        <div className="absolute inset-0 bg-white/75 dark:bg-slate-950/75" aria-hidden />
+        <div className="relative max-w-4xl">
           <h1 className="text-4xl font-extrabold tracking-tight text-gtek-navy dark:text-slate-200 md:text-5xl">About GTek</h1>
-          <div className="mt-8 space-y-8">
-            {narrativeItems.map((item, idx) => (
-              <div key={`${item.title}-${idx}`}>
-                <h3 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{item.title}</h3>
-                <p className="mt-3 text-slate-700 leading-relaxed dark:text-slate-400">{item.subtitle}</p>
-              </div>
-            ))}
-          </div>
+          <Card className="mt-8 border-slate-200/90 bg-white/85 p-8 shadow-lg backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/70">
+            <div className="space-y-8">
+              {narrativeItems.map((item, idx) => (
+                <div key={`${item.title}-${idx}`}>
+                  <h3 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{item.title}</h3>
+                  <p className="mt-3 text-slate-700 leading-relaxed dark:text-slate-300">{item.subtitle}</p>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
       </Section>
 

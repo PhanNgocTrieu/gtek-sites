@@ -22,6 +22,13 @@ export const aboutPage = defineType({
   },
   fields: [
     defineField({
+      name: "heroBackgroundImage",
+      title: "Hero background image",
+      description: "Background image behind the About intro section.",
+      type: "image",
+      options: { hotspot: true },
+    }),
+    defineField({
       name: "narrativeItems",
       title: "Company narrative sections",
       type: "array",

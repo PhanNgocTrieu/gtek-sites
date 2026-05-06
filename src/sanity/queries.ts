@@ -11,7 +11,10 @@ export const siteSettingsQuery = groq`*[_type == "siteSettings" && _id == "siteS
   contactPosition,
   websiteUrl,
   "contactLogo": contactLogo.asset->url,
-  "contactQrImage": contactQrImage.asset->url
+  "contactQrImage": contactQrImage.asset->url,
+  "servicesHeroBackground": servicesHeroBackground.asset->url,
+  "projectsHeroBackground": projectsHeroBackground.asset->url,
+  "contactHeroBackground": contactHeroBackground.asset->url
 }`;
 
 export const homePageQuery = groq`*[_type == "homePage" && _id == "homePage"][0]{
@@ -33,6 +36,7 @@ export const homePageQuery = groq`*[_type == "homePage" && _id == "homePage"][0]
 }`;
 
 export const aboutPageQuery = groq`*[_type == "aboutPage" && _id == "aboutPage"][0]{
+  "heroBackgroundImage": heroBackgroundImage.asset->url,
   narrativeItems[]{
     title,
     subtitle

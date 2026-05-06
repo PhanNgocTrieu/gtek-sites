@@ -22,6 +22,7 @@ type SiteSettings = {
   websiteUrl?: string;
   contactLogo?: string;
   contactQrImage?: string;
+  contactHeroBackground?: string;
 };
 
 export default async function ContactPage() {
@@ -45,11 +46,18 @@ export default async function ContactPage() {
   const contactQrImage =
     settings?.contactQrImage ??
     "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https%3A%2F%2Fwww.gtekeng.com";
+  const contactHeroBackground = settings?.contactHeroBackground;
 
   return (
     <main>
-      <Section className="bg-gradient-to-b from-slate-50 to-white py-16 dark:from-slate-900 dark:to-slate-950">
-        <div className="max-w-4xl">
+      <Section className={`py-16 ${contactHeroBackground ? "relative overflow-hidden" : "bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950"}`}>
+        {contactHeroBackground ? (
+          <>
+            <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${contactHeroBackground}')` }} aria-hidden />
+            <div className="absolute inset-0 bg-white/75 dark:bg-slate-950/75" aria-hidden />
+          </>
+        ) : null}
+        <div className={`max-w-4xl ${contactHeroBackground ? "relative" : ""}`}>
           <Badge>Contact</Badge>
           <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-gtek-navy dark:text-slate-200 md:text-5xl">
             Let’s talk about your project

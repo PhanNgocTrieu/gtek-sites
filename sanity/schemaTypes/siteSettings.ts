@@ -87,6 +87,24 @@ export const siteSettings = defineType({
       type: "image",
       options: { hotspot: true },
     }),
+    defineField({
+      name: "servicesHeroBackground",
+      title: "Services hero background",
+      type: "image",
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: "projectsHeroBackground",
+      title: "Projects hero background",
+      type: "image",
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: "contactHeroBackground",
+      title: "Contact hero background",
+      type: "image",
+      options: { hotspot: true },
+    }),
   ],
 });
 
