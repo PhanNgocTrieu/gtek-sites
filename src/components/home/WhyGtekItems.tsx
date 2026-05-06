@@ -27,7 +27,7 @@ export function WhyGtekItems({ items }: { items: WhyGtekItem[] }) {
         {visibleItems.map((v, i) => (
           <Card
             key={v._key ?? `why-${i}`}
-            className="p-6 hover:-translate-y-1 hover:shadow-md"
+            className="p-6 hover:-translate-y-1 hover:shadow-md dark:hover:border-slate-600 dark:hover:bg-slate-800/60"
           >
             <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-200">
               {v.title}
@@ -43,7 +43,7 @@ export function WhyGtekItems({ items }: { items: WhyGtekItem[] }) {
         <div className="mt-8 flex justify-center">
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-gtek-navy shadow-sm transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-gtek-navy shadow-sm transition hover:bg-slate-50 active:bg-slate-100 dark:border-slate-500 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 dark:active:bg-slate-600"
             aria-expanded={expanded}
             aria-controls={panelId}
             onClick={() => setExpanded((e) => !e)}

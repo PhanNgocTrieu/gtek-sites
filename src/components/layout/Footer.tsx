@@ -23,7 +23,10 @@ export default function Footer() {
             <p>Phone +1 204 792 8829</p>
             <p className="pt-2">
               Email:{" "}
-              <a href="mailto:wayne.wong@gtekeng.com" className="transition-colors hover:text-gtek-amber">
+              <a
+                href="mailto:wayne.wong@gtekeng.com"
+                className="transition-colors hover:text-gtek-amber active:text-yellow-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gtek-amber"
+              >
                 wayne.wong@gtekeng.com
               </a>
             </p>

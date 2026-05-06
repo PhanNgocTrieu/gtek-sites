@@ -3,11 +3,11 @@ import { type ReactNode } from "react";
 
 const variants = {
   primary:
-    "bg-gtek-amber text-gtek-navy hover:bg-yellow-400 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gtek-amber",
+    "bg-gtek-amber text-gtek-navy hover:bg-yellow-400 active:bg-yellow-500 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gtek-amber",
   secondary:
-    "bg-transparent border-2 border-slate-300 text-slate-900 hover:border-slate-400 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400",
+    "bg-transparent border-2 border-slate-300 text-slate-900 hover:border-slate-400 hover:bg-slate-50 active:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400",
   darkSecondary:
-    "bg-transparent border-2 border-slate-400 text-white hover:border-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
+    "bg-transparent border-2 border-slate-400 text-white hover:border-slate-100 hover:bg-slate-800 active:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
 } as const;
 
 export default function ButtonLink({

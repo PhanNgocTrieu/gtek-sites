@@ -83,7 +83,7 @@ export default function ThemeToggle() {
     `inline-flex items-center justify-center rounded-full p-2 transition-colors ${
       mode === value
         ? "bg-gtek-navy text-white"
-        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-white dark:active:bg-slate-600"
     }`;
 
   /* Visible chrome-steel placeholders — avoids empty pill before hydration */

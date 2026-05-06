@@ -1,8 +1,10 @@
 import React from "react";
 import { type StructureBuilder } from "sanity/desk";
+import { Box, Button, Card, Dialog, Flex, Stack, Text } from "@sanity/ui";
 import DeletePane from "./components/DeletePane";
 
 const PublishPane = (props: any) => {
+  const [dialog, setDialog] = React.useState<{ title: string; message: string; tone?: "critical" | "positive" } | null>(null);
   const doc = props?.document?.displayed ?? {};
   const rawId: string | undefined = doc?._id || props.documentId;
   if (!rawId) return React.createElement("div", null, "No document id available.");
@@ -26,10 +28,8 @@ const PublishPane = (props: any) => {
       case "aboutPage":
         return "/about";
       case "author":
-        // authors currently map to about page; change if you have author pages
         return "/about";
       default:
-        // fallback to listing or root
         return "/";
     }
   }
@@ -56,21 +56,30 @@ const PublishPane = (props: any) => {
         } catch {
           /* not JSON */
         }
-        // eslint-disable-next-line no-alert
-        alert(`Could not obtain revalidation token: ${tokenRes.status} ${text}${hint}`);
+        setDialog({
+          title: "Refresh failed",
+          message: `Could not obtain revalidation token: ${tokenRes.status} ${text}${hint}`,
+          tone: "critical",
+        });
         return;
       }
       if (!ct.includes("application/json")) {
         const text = await tokenRes.text().catch(() => "<no body>");
-        // eslint-disable-next-line no-alert
-        alert(`Token endpoint did not return JSON: ${text}`);
+        setDialog({
+          title: "Refresh failed",
+          message: `Token endpoint did not return JSON: ${text}`,
+          tone: "critical",
+        });
         return;
       }
       const tokenJson = await tokenRes.json();
       const token = tokenJson?.token as string;
       if (!token) {
-        // eslint-disable-next-line no-alert
-        alert(`Token endpoint returned no token: ${JSON.stringify(tokenJson)}`);
+        setDialog({
+          title: "Refresh failed",
+          message: `Token endpoint returned no token: ${JSON.stringify(tokenJson)}`,
+          tone: "critical",
+        });
         return;
       }
 
@@ -82,42 +91,73 @@ const PublishPane = (props: any) => {
       const ctype = res.headers.get("content-type") || "";
       if (!ctype.includes("application/json")) {
         const text = await res.text().catch(() => "<no body>");
-        // eslint-disable-next-line no-alert
-        alert(`Revalidation endpoint returned non-JSON: ${text}`);
+        setDialog({
+          title: "Refresh failed",
+          message: `Revalidation endpoint returned non-JSON: ${text}`,
+          tone: "critical",
+        });
         return;
       }
       const json = await res.json();
       if (res.ok && json?.ok) {
-        // eslint-disable-next-line no-alert
-        alert("Cache cleared — refresh the live site tab to see published content.");
+        setDialog({
+          title: "Refresh completed",
+          message: "Cache cleared — refresh the live site tab to see published content.",
+          tone: "positive",
+        });
       } else {
-        // eslint-disable-next-line no-alert
-        alert(`Revalidation failed: ${json?.error || res.status}`);
+        setDialog({
+          title: "Refresh failed",
+          message: `Revalidation failed: ${json?.error || res.status}`,
+          tone: "critical",
+        });
       }
     } catch (err) {
-      // eslint-disable-next-line no-alert
-      alert(`Revalidation error: ${String(err)}`);
+      setDialog({
+        title: "Refresh failed",
+        message: `Revalidation error: ${String(err)}`,
+        tone: "critical",
+      });
     }
   };
 
-  return React.createElement(
-    "div",
-    { style: { padding: 12 } },
-    React.createElement("p", null, React.createElement("strong", null, "Published Content")),
-    React.createElement(
-      "p",
-      null,
-      "Preview mode has been removed. Use this button to clear cache and refresh published pages."
-    ),
-    React.createElement(
-      "button",
-      { onClick: refreshPublished, style: { padding: "8px 12px", cursor: "pointer" } },
-      "Refresh Published"
-    )
+  return (
+    <>
+      <Card padding={4}>
+        <Stack space={4}>
+          <Text size={2} weight="semibold">
+            Published Content
+          </Text>
+          <Text size={1} muted>
+            Preview mode has been removed. Use this button to clear cache and refresh published pages.
+          </Text>
+          <Flex>
+            <Button text="Refresh Published" tone="primary" onClick={refreshPublished} />
+          </Flex>
+        </Stack>
+      </Card>
+
+      {dialog ? (
+        <Dialog id="publish-pane-result" header={dialog.title} onClose={() => setDialog(null)} width={1}>
+          <Box padding={4}>
+            <Stack space={4}>
+              <Text size={1}>{dialog.message}</Text>
+              <Flex justify="flex-end">
+                <Button
+                  text="Close"
+                  tone={dialog.tone === "critical" ? "critical" : "positive"}
+                  onClick={() => setDialog(null)}
+                />
+              </Flex>
+            </Stack>
+          </Box>
+        </Dialog>
+      ) : null}
+    </>
   );
 };
 
-const previewViews = (S: StructureBuilder, schemaType: string) => [
+const previewViews = (S: StructureBuilder) => [
   S.view.form(),
   S.view.component(PublishPane).title("Publish") as any,
 ];
@@ -138,22 +178,22 @@ export const deskStructure = (S: StructureBuilder) =>
                 .id("shortcut-contact-details")
                 .title("Contact Details")
                 .child(
-                  S.document().schemaType("siteSettings").documentId("siteSettings").views(previewViews(S, "siteSettings"))
+                  S.document().schemaType("siteSettings").documentId("siteSettings").views(previewViews(S))
                 ),
             ]),
         ),
       S.listItem()
         .id("site-settings")
         .title("Site Settings")
-        .child(S.document().schemaType("siteSettings").documentId("siteSettings").views(previewViews(S, "siteSettings"))),
+        .child(S.document().schemaType("siteSettings").documentId("siteSettings").views(previewViews(S))),
       S.listItem()
         .id("home-page")
         .title("Home Page")
-        .child(S.document().schemaType("homePage").documentId("homePage").views(previewViews(S, "homePage"))),
+        .child(S.document().schemaType("homePage").documentId("homePage").views(previewViews(S))),
       S.listItem()
         .id("about-page")
         .title("About Page")
-        .child(S.document().schemaType("aboutPage").documentId("aboutPage").views(previewViews(S, "aboutPage"))),
+        .child(S.document().schemaType("aboutPage").documentId("aboutPage").views(previewViews(S))),
       S.divider(),
       S.listItem()
         .id("projects")
@@ -207,4 +247,3 @@ export const deskStructure = (S: StructureBuilder) =>
         );
       }),
     ]);
-

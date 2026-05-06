@@ -54,7 +54,7 @@ export default function Navbar() {
               className={`rounded-full px-4 py-2 transition-colors ${
                 isActive(item.href)
                   ? "bg-gtek-navy text-slate-100"
-                  : "text-slate-700 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                  : "text-slate-700 hover:bg-slate-100 active:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:active:bg-slate-600"
               }`}
             >
               {item.label}
@@ -62,7 +62,7 @@ export default function Navbar() {
           ))}
           <Link
             href="/contact"
-            className="ml-2 inline-flex items-center justify-center rounded-full bg-gtek-amber px-5 py-2 text-sm font-bold text-gtek-navy transition-colors hover:bg-yellow-400"
+            className="ml-2 inline-flex items-center justify-center rounded-full bg-gtek-amber px-5 py-2 text-sm font-bold text-gtek-navy transition-colors hover:bg-yellow-400 active:bg-yellow-500 dark:hover:bg-yellow-300 dark:active:bg-yellow-200"
           >
             Contact
           </Link>
@@ -71,7 +71,7 @@ export default function Navbar() {
         <div className="md:hidden">
           <button
             type="button"
-            className="rounded-md p-1 text-slate-700 hover:bg-slate-100 hover:text-gtek-navy dark:text-slate-300 dark:hover:bg-slate-800"
+            className="rounded-md p-1 text-slate-700 hover:bg-slate-100 hover:text-gtek-navy active:bg-slate-200 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:active:bg-slate-600"
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
             aria-controls="mobile-nav"
@@ -94,7 +94,7 @@ export default function Navbar() {
                 className={`rounded-lg px-3 py-2 ${
                   isActive(item.href)
                     ? "bg-gtek-navy text-slate-100"
-                    : "text-slate-700 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                    : "text-slate-700 hover:bg-slate-100 active:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:active:bg-slate-600"
                 }`}
                 onClick={() => setIsOpen(false)}
               >

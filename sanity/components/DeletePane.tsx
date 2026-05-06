@@ -7,6 +7,7 @@ export default function DeletePane(props: any) {
   const schemaType: string | undefined = props?.schemaType;
   const { delete: deleteOperation } = useDocumentOperation(documentId ?? "", schemaType ?? "");
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const isDeleteDisabled = !documentId || !schemaType || Boolean(deleteOperation.disabled);
 
   const onConfirmDelete = () => {
     if (!documentId || !schemaType) return;
@@ -28,7 +29,7 @@ export default function DeletePane(props: any) {
             tone="critical"
             text="Delete now"
             onClick={() => setIsDialogOpen(true)}
-            disabled={!documentId || !schemaType || deleteOperation.disabled}
+            disabled={isDeleteDisabled}
           />
         </Stack>
       </Card>
@@ -45,7 +46,7 @@ export default function DeletePane(props: any) {
               <Text size={1}>This will permanently delete this document and cannot be undone.</Text>
               <Flex gap={3} justify="flex-end">
                 <Button text="Cancel" mode="ghost" onClick={() => setIsDialogOpen(false)} />
-                <Button tone="critical" text="Delete permanently" onClick={onConfirmDelete} />
+                <Button tone="critical" text="Delete permanently" onClick={onConfirmDelete} disabled={isDeleteDisabled} />
               </Flex>
             </Stack>
           </Box>
