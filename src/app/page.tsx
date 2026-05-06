@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Section from "@/components/ui/Section";
 import Card from "@/components/ui/Card";
-import Badge from "@/components/ui/Badge";
+import { WhyGtekItems } from "@/components/home/WhyGtekItems";
 import { homePageQuery, siteSettingsQuery } from "@/sanity/queries";
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ type HomePage = {
   servicesIntro?: string;
   serviceCards?: Array<{ title: string; description: string }>;
   whyIntro?: string;
-  whyItems?: Array<{ title: string; body: string }>;
+  whyItems?: Array<{ _key?: string; title: string; body: string }>;
   closingHeadline?: string;
   closingSubhead?: string;
   closingCtaLabel?: string;
@@ -95,7 +95,7 @@ export default async function Home() {
         ];
 
   const whyIntro =
-    home?.whyIntro ?? "Built for projects where speed, accountability, and technical depth matter.";
+    home?.whyIntro ?? "" //"Built for projects where speed, accountability, and technical depth matter.";
   const whyItems =
     home?.whyItems?.length
       ? home.whyItems
@@ -147,7 +147,7 @@ export default async function Home() {
         <div className="relative">
           <Section className="py-20 md:py-28">
             <div className="max-w-4xl">
-              <Badge>Winnipeg • Canada-wide support</Badge>
+              {/* <Badge>Winnipeg • Canada-wide support</Badge> */}
               <h1 className="mt-5 text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
                 {heroHeadline}
               </h1>
@@ -205,14 +205,7 @@ export default async function Home() {
             {whyIntro}
           </p>
         </div>
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {whyItems.slice(0, 3).map((v) => (
-            <Card key={v.title} className="p-6 hover:-translate-y-1 hover:shadow-md">
-              <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-200">{v.title}</h3>
-              <p className="mt-3 text-sm text-slate-700 leading-relaxed dark:text-slate-400">{v.body}</p>
-            </Card>
-          ))}
-        </div>
+        <WhyGtekItems items={whyItems} />
       </Section>
 
       <Section className="bg-white py-8 dark:bg-slate-950">

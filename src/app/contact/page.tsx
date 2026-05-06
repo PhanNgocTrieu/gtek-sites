@@ -15,8 +15,13 @@ type SiteSettings = {
   companyName?: string;
   generalEmail?: string;
   phone?: string;
-  officeHours?: string;
   addressLines?: string[];
+  contactResponsibleName?: string;
+  contactCertificate?: string;
+  contactPosition?: string;
+  websiteUrl?: string;
+  contactLogo?: string;
+  contactQrImage?: string;
 };
 
 export default async function ContactPage() {
@@ -31,9 +36,15 @@ export default async function ContactPage() {
   const companyName = settings?.companyName ?? "GTek Engineering Inc.";
   const generalEmail = settings?.generalEmail ?? "info@gtek.ca";
   const phone = settings?.phone ?? "[office phone]";
-  const officeHours = settings?.officeHours ?? "Monday – Friday, 8:00 AM – 5:00 PM CT";
-  const addressLines =
-    settings?.addressLines?.length ? settings.addressLines : ["[Office street address]", "Winnipeg, Manitoba [postal code]"];
+  const contactResponsibleName = settings?.contactResponsibleName ?? "Wayne (WK) Wong";
+  const contactCertificate = settings?.contactCertificate ?? "M.Eng., P.Eng.";
+  const contactPosition = settings?.contactPosition ?? "Principal Geotechnical Engineer, President";
+  const websiteUrl = settings?.websiteUrl ?? "https://www.gtekeng.com";
+  const websiteLabel = websiteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const contactLogo = settings?.contactLogo ?? "/images/gtek-logo.png";
+  const contactQrImage =
+    settings?.contactQrImage ??
+    "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https%3A%2F%2Fwww.gtekeng.com";
 
   return (
     <main>
@@ -61,31 +72,56 @@ export default async function ContactPage() {
             </Card>
           </div>
           <div className="lg:col-span-5 space-y-6">
-            <Card className="p-6 hover:shadow-md">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-200">Contact details</h2>
-              <div className="mt-4 space-y-3 text-sm leading-relaxed text-slate-700 dark:text-slate-400">
-                <div>
-                  <p className="font-semibold">{companyName}</p>
-                  {addressLines.map((line) => (
-                    <p key={line}>{line}</p>
-                  ))}
+            <Card className="overflow-hidden p-0 hover:shadow-md">
+              <h2 className="px-6 pt-6 text-xl font-bold text-slate-900 dark:text-slate-200">Contact details</h2>
+              <div className="mt-4 bg-[#0F4A57] p-6 text-slate-100">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-[1fr_auto]">
+                  <div>
+                    <p className="text-2xl font-bold tracking-wide">{companyName}</p>
+                    <p className="mt-2 text-xl font-semibold text-slate-100">{contactResponsibleName}</p>
+                    <p className="mt-1 text-base text-slate-200">{contactCertificate}</p>
+                    <p className="mt-1 text-base text-slate-200">{contactPosition}</p>
+
+                    <div className="mt-6 space-y-3 text-base">
+                      <div className="flex items-center gap-3">
+                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-emerald-300/70 text-emerald-300">
+                          ☎
+                        </span>
+                        <a className="hover:underline" href={`tel:${phone.replace(/\s+/g, "")}`}>
+                          {phone}
+                        </a>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-emerald-300/70 text-emerald-300">
+                          ✉
+                        </span>
+                        <a className="break-all hover:underline" href={`mailto:${generalEmail}`}>
+                          {generalEmail}
+                        </a>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-emerald-300/70 text-emerald-300">
+                          🌐
+                        </span>
+                        <a className="hover:underline" href={websiteUrl} target="_blank" rel="noreferrer">
+                          {websiteLabel}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-center gap-4">
+                    <img src={contactLogo} alt="GTek Engineering logo" className="h-auto w-44 object-contain" />
+                    <img
+                      src={contactQrImage}
+                      alt="QR code to GTek Engineering website"
+                      className="h-32 w-32 bg-white p-1"
+                      loading="lazy"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <p>
-                    <span className="font-semibold">Phone:</span> {phone}
-                  </p>
-                  <p>
-                    <span className="font-semibold">Email:</span>{" "}
-                    <a className="font-semibold text-gtek-navy hover:underline dark:text-slate-300" href={`mailto:${generalEmail}`}>
-                      {generalEmail}
-                    </a>
-                  </p>
-                </div>
-                <div>
-                  <p>
-                    <span className="font-semibold">Office hours:</span> {officeHours}
-                  </p>
-                </div>
+
+                <p className="mt-6 text-xl italic tracking-wide text-emerald-300">Engineered Ground Solutions</p>
               </div>
             </Card>
 

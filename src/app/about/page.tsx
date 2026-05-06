@@ -10,13 +10,16 @@ export const metadata: Metadata = {
 };
 
 type AboutPageDoc = {
+  narrativeItems?: Array<{
+    title: string;
+    subtitle: string;
+  }>;
   narrative?: string[];
   teamMembers?: Array<{
     name: string;
     title: string;
     credentials?: string;
     bio: string;
-    photo?: string;
   }>;
   affiliations?: string[];
 };
@@ -30,13 +33,32 @@ export default async function AboutPage() {
   const about = preview
     ? await fetchModule.sanityFetchDraft<AboutPageDoc>(aboutPageQuery, {}, 0)
     : await fetchModule.sanityFetchPublished<AboutPageDoc>(aboutPageQuery, {}, 120);
-  const narrative =
-    about?.narrative?.length
-      ? about.narrative
+  const narrativeItemsFromLegacy = about?.narrative?.map((text, idx) => ({
+    title: idx === 0 ? "Who we are" : idx === 1 ? "How we work" : "Where we work",
+    subtitle: text,
+  }));
+
+  const narrativeItems =
+    about?.narrativeItems?.length
+      ? about.narrativeItems
+      : narrativeItemsFromLegacy?.length
+      ? narrativeItemsFromLegacy
       : [
-          "GTek Engineering Inc. is a geotechnical consulting firm founded in Winnipeg, Manitoba. We provide engineering services across dam safety, mining, foundations, and slope stability, drawing on more than 25 years of combined senior experience.",
-          "We are deliberately small. Every project is led by a Principal and supported by a focused technical team. This structure lets us respond quickly, control quality at every stage, and build long-term working relationships with our clients.",
-          "GTek serves clients across Canada from our Winnipeg office, with active projects in Manitoba and surrounding provinces. We undertake assignments at any stage—from desktop study through construction monitoring and long-term performance review.",
+          {
+            title: "Who we are",
+            subtitle:
+              "GTek Engineering Inc. is a geotechnical consulting firm founded in Winnipeg, Manitoba. We provide engineering services across dam safety, mining, foundations, and slope stability, drawing on more than 25 years of combined senior experience.",
+          },
+          {
+            title: "How we work",
+            subtitle:
+              "We are deliberately small. Every project is led by a Principal and supported by a focused technical team. This structure lets us respond quickly, control quality at every stage, and build long-term working relationships with our clients.",
+          },
+          {
+            title: "Where we work",
+            subtitle:
+              "GTek serves clients across Canada from our Winnipeg office, with active projects in Manitoba and surrounding provinces. We undertake assignments at any stage—from desktop study through construction monitoring and long-term performance review.",
+          },
         ];
 
   const team =
@@ -79,9 +101,12 @@ export default async function AboutPage() {
       <Section className="bg-gradient-to-b from-slate-50 to-white py-16 dark:from-slate-900 dark:to-slate-950">
         <div className="max-w-4xl">
           <h1 className="text-4xl font-extrabold tracking-tight text-gtek-navy dark:text-slate-200 md:text-5xl">About GTek</h1>
-          <div className="mt-6 space-y-4 text-slate-700 leading-relaxed dark:text-slate-400">
-            {narrative.map((p, idx) => (
-              <p key={idx}>{p}</p>
+          <div className="mt-8 space-y-8">
+            {narrativeItems.map((item, idx) => (
+              <div key={`${item.title}-${idx}`}>
+                <h3 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{item.title}</h3>
+                <p className="mt-3 text-slate-700 leading-relaxed dark:text-slate-400">{item.subtitle}</p>
+              </div>
             ))}
           </div>
         </div>
@@ -97,28 +122,13 @@ export default async function AboutPage() {
 
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {team.map((p) => (
-            <Card key={p.name} className="overflow-hidden hover:-translate-y-1 hover:shadow-md">
-              <div className="aspect-square w-full bg-gradient-to-br from-slate-100 to-slate-200">
-                {p.photo ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={p.photo} alt="" className="h-full w-full object-cover" />
-                ) : (
-                  <div className="h-full w-full flex items-center justify-center">
-                    <div className="text-center px-6">
-                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Headshot</p>
-                      <p className="mt-1 text-xs text-slate-500">300×300 square crop</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="p-6">
-                <p className="text-base font-extrabold text-slate-900 leading-snug dark:text-slate-200">{p.name}</p>
-                <p className="mt-1 text-sm font-semibold text-gtek-navy dark:text-slate-300">{p.title}</p>
-                {p.credentials ? (
-                  <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-500">{p.credentials}</p>
-                ) : null}
-                <p className="mt-3 text-sm text-slate-700 leading-relaxed dark:text-slate-400">{p.bio}</p>
-              </div>
+            <Card key={p.name} className="p-6 hover:-translate-y-1 hover:shadow-md">
+              <p className="text-base font-extrabold text-slate-900 leading-snug dark:text-slate-200">{p.name}</p>
+              <p className="mt-1 text-sm font-semibold text-gtek-navy dark:text-slate-300">{p.title}</p>
+              {p.credentials ? (
+                <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-500">{p.credentials}</p>
+              ) : null}
+              <p className="mt-3 text-sm text-slate-700 leading-relaxed dark:text-slate-400">{p.bio}</p>
             </Card>
           ))}
         </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -30,13 +31,21 @@ export default function Navbar() {
   }, [isOpen]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200/30 bg-white/90 text-slate-900 shadow-sm backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/85 dark:text-slate-200">
+    <header className="sticky top-0 z-[200] isolate w-full border-b border-slate-200/30 bg-white/90 text-slate-900 shadow-sm backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/85 dark:text-slate-200">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <div className="font-bold text-xl tracking-tight">
-          <Link href="/" className="flex items-center gap-2 transition-colors hover:text-gtek-navy">
-            <span className="text-gtek-navy">GTek</span> Engineering
-          </Link>
-        </div>
+        <Link
+          href="/"
+          className="flex shrink-0 items-center transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gtek-navy"
+        >
+          <Image
+            src="/images/gtek-logo.png"
+            alt="GTek Engineering"
+            width={238}
+            height={120}
+            className="h-9 w-auto md:h-10"
+            priority
+          />
+        </Link>
         <nav className="hidden items-center gap-2 text-sm font-semibold md:flex">
           {navItems.map((item) => (
             <Link

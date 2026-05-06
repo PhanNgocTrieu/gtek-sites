@@ -6,25 +6,47 @@ export const aboutPage = defineType({
   type: "document",
   preview: {
     select: {
+      narrativeItems: "narrativeItems",
       narrative: "narrative",
       teamMembers: "teamMembers",
     },
-    prepare({ narrative, teamMembers }) {
+    prepare({ narrativeItems, narrative, teamMembers }) {
+      const sections = Array.isArray(narrativeItems) ? narrativeItems.filter(Boolean).length : 0;
       const paragraphs = Array.isArray(narrative) ? narrative.filter(Boolean).length : 0;
       const members = Array.isArray(teamMembers) ? teamMembers.filter(Boolean).length : 0;
       return {
         title: "About Page",
-        subtitle: `${paragraphs} narrative paragraph(s) • ${members} team member(s)`,
+        subtitle: `${sections || paragraphs} narrative section(s) • ${members} team member(s)`,
       };
     },
   },
   fields: [
     defineField({
+      name: "narrativeItems",
+      title: "Company narrative sections",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            { name: "title", title: "Title", type: "string", validation: (Rule: any) => Rule.required().max(80) },
+            { name: "subtitle", title: "Subtitle", type: "text", rows: 4, validation: (Rule: any) => Rule.required().max(600) },
+          ],
+          preview: {
+            select: { title: "title", subtitle: "subtitle" },
+          },
+        },
+      ],
+      validation: (Rule) => Rule.max(12),
+      description: "Use this for blocks like 'Who we are' + subtitle. You can add as many sections as needed.",
+    }),
+    defineField({
       name: "narrative",
-      title: "Company narrative (paragraphs)",
+      title: "Legacy narrative (paragraphs)",
       type: "array",
       of: [{ type: "text" }],
       validation: (Rule) => Rule.max(6),
+      description: "Old format. Keep empty if you use 'Company narrative sections' above.",
     }),
     defineField({
       name: "teamMembers",
@@ -37,8 +59,14 @@ export const aboutPage = defineType({
             { name: "name", title: "Name", type: "string", validation: (Rule: any) => Rule.required().max(80) },
             { name: "title", title: "Title", type: "string", validation: (Rule: any) => Rule.required().max(80) },
             { name: "credentials", title: "Credentials", type: "string", validation: (Rule: any) => Rule.max(80) },
-            { name: "bio", title: "Bio line", type: "text", rows: 3, validation: (Rule: any) => Rule.required().max(300) },
-            { name: "photo", title: "Photo", type: "image", options: { hotspot: true } },
+            {
+              name: "bio",
+              title: "Bio line",
+              type: "text",
+              rows: 6,
+              validation: (Rule: any) => Rule.required().max(1200),
+              description: "Supports long text. Keep it concise but can be up to 1200 characters.",
+            },
           ],
         },
       ],

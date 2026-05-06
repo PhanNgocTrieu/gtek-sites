@@ -1,5 +1,6 @@
 import React from "react";
 import { type StructureBuilder } from "sanity/desk";
+import DeletePane from "./components/DeletePane";
 
 const PublishPane = (props: any) => {
   const doc = props?.document?.displayed ?? {};
@@ -42,8 +43,21 @@ const PublishPane = (props: any) => {
       const ct = tokenRes.headers.get("content-type") || "";
       if (!tokenRes.ok) {
         const text = await tokenRes.text().catch(() => "");
+        let hint = "";
+        try {
+          const errBody = JSON.parse(text) as { error?: string };
+          if (errBody?.error === "server_secret_missing") {
+            hint =
+              "\n\nThe server needs SANITY_WEBHOOK_SECRET or SANITY_PREVIEW_SECRET in production (e.g. Vercel → Environment Variables), then redeploy. Use the same value as your Sanity webhook secret.";
+          } else if (errBody?.error === "origin_not_allowed") {
+            hint =
+              "\n\nSet NEXT_PUBLIC_SITE_URL to your live URL (e.g. https://www.gtekeng.com), redeploy, and open Studio from that domain.";
+          }
+        } catch {
+          /* not JSON */
+        }
         // eslint-disable-next-line no-alert
-        alert(`Could not obtain revalidation token: ${tokenRes.status} ${text}`);
+        alert(`Could not obtain revalidation token: ${tokenRes.status} ${text}${hint}`);
         return;
       }
       if (!ct.includes("application/json")) {
@@ -113,23 +127,19 @@ export const deskStructure = (S: StructureBuilder) =>
     .title("GTek Content")
     .items([
       S.listItem()
-        .id("shortcuts")
-        .title("Shortcuts")
+        .id("contacts")
+        .title("Contacts")
         .child(
           S.list()
-            .id("shortcuts-list")
-            .title("Shortcuts")
+            .id("contacts-list")
+            .title("Contacts")
             .items([
               S.listItem()
-                .id("shortcut-site-settings")
-                .title("Edit Site Settings")
+                .id("shortcut-contact-details")
+                .title("Contact Details")
                 .child(
                   S.document().schemaType("siteSettings").documentId("siteSettings").views(previewViews(S, "siteSettings"))
                 ),
-              S.listItem()
-                .id("shortcut-home-page")
-                .title("Edit Home Page")
-                .child(S.document().schemaType("homePage").documentId("homePage").views(previewViews(S, "homePage"))),
             ]),
         ),
       S.listItem()
@@ -145,9 +155,6 @@ export const deskStructure = (S: StructureBuilder) =>
         .title("About Page")
         .child(S.document().schemaType("aboutPage").documentId("aboutPage").views(previewViews(S, "aboutPage"))),
       S.divider(),
-      // Do not call `.child()` on `documentTypeListItem` to add a document editor: that replaces
-      // the default `documentTypeList` and breaks the list of documents. Nest `documentTypeList`
-      // and pass the custom document pane as *its* child instead.
       S.listItem()
         .id("projects")
         .title("Projects")
@@ -160,7 +167,7 @@ export const deskStructure = (S: StructureBuilder) =>
               S.document()
                 .schemaType("project")
                 .documentId(docId)
-                .views(previewViews(S, "project"))
+                .views([S.view.form(), S.view.component(PublishPane).title("Publish") as any, S.view.component(DeletePane).title("Delete") as any])
             )
         ),
       S.listItem()
@@ -175,7 +182,7 @@ export const deskStructure = (S: StructureBuilder) =>
               S.document()
                 .schemaType("service")
                 .documentId(docId)
-                .views(previewViews(S, "service"))
+                .views([S.view.form(), S.view.component(PublishPane).title("Publish") as any, S.view.component(DeletePane).title("Delete") as any])
             )
         ),
       S.listItem()
@@ -186,12 +193,6 @@ export const deskStructure = (S: StructureBuilder) =>
           S.documentTypeList("author")
             .title("Author / Bio")
             .defaultOrdering([{ field: "name", direction: "asc" }])
-            .child((docId) =>
-              S.document()
-                .schemaType("author")
-                .documentId(docId)
-                .views(previewViews(S, "author"))
-            )
         ),
       S.divider(),
       ...S.documentTypeListItems().filter((item) => {

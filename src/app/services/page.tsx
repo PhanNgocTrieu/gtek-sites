@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 const serviceGroups = [
   {
     title: "Geotechnical Engineering",
+    image: "",
     items: [
       "Geotechnical investigations & reporting",
       "Subsurface exploration planning",
@@ -30,6 +31,7 @@ const serviceGroups = [
   },
   {
     title: "Dam Safety, Instrumentation & Management",
+    image: "",
     items: [
       "Dam safety reviews and assessments",
       "Instrumentation selection and layout",
@@ -44,6 +46,7 @@ const serviceGroups = [
   },
   {
     title: "Project Administration & Construction Support",
+    image: "",
     items: [
       "Field coordination and schedule alignment",
       "Contractor / stakeholder coordination",
@@ -53,6 +56,7 @@ const serviceGroups = [
   },
   {
     title: "Material Testing",
+    image: "",
     items: [
       "Compaction testing and verification",
       "Concrete testing (as required)",
@@ -69,8 +73,64 @@ export default async function ServicesPage() {
 
   const fetchModule = await import("@/sanity/fetch");
   const sanityGroups = preview
-    ? await fetchModule.sanityFetchDraft<Array<{ title: string; items: string[] }>>(serviceGroupsQuery, {}, 0)
-    : await fetchModule.sanityFetchPublished<Array<{ title: string; items: string[] }>>(serviceGroupsQuery, {}, 60);
+    ? await fetchModule.sanityFetchDraft<
+        Array<{
+          title?: string | null;
+          image?: string | null;
+          items?: Array<
+            | string
+            | {
+                title?: string | null;
+                description?: string | null;
+                image?: string | null;
+              }
+            | null
+          > | null;
+        }>
+      >(
+        serviceGroupsQuery,
+        {},
+        0,
+      )
+    : await fetchModule.sanityFetchPublished<
+        Array<{
+          title?: string | null;
+          image?: string | null;
+          items?: Array<
+            | string
+            | {
+                title?: string | null;
+                description?: string | null;
+                image?: string | null;
+              }
+            | null
+          > | null;
+        }>
+      >(
+        serviceGroupsQuery,
+        {},
+        60,
+      );
+
+  const groups = (sanityGroups ?? serviceGroups)
+    .filter((group): group is NonNullable<typeof group> => Boolean(group))
+    .map((group) => ({
+      title: (group.title ?? "").trim(),
+      image: group.image ?? "",
+      items: (group.items ?? [])
+        .filter((item): item is NonNullable<typeof item> => Boolean(item))
+        .map((item) => {
+          if (typeof item === "string") {
+            return { title: item.trim(), description: "" };
+          }
+          return {
+            title: (item.title ?? "").trim(),
+            description: (item.description ?? "").trim(),
+          };
+        })
+        .filter((item) => item.title.length > 0),
+    }))
+    .filter((group) => group.title.length > 0);
 
   return (
     <main>
@@ -89,38 +149,31 @@ export default async function ServicesPage() {
 
       <Section className="bg-white py-14 dark:bg-slate-950">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {(sanityGroups ?? serviceGroups).map((group) => (
+          {groups.map((group) => (
             <Card key={group.title} className="p-6 hover:-translate-y-1 hover:shadow-md">
-              <details className="group">
-                <summary className="cursor-pointer list-none select-none flex items-start justify-between gap-4">
-                  <div>
-                    <h2 className="text-xl font-bold text-gtek-navy dark:text-slate-200">{group.title}</h2>
-                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{group.items.length} offerings</p>
+              <div>
+                <h2 className="text-xl font-bold text-gtek-navy dark:text-slate-200">{group.title}</h2>
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{group.items.length} offerings</p>
+              </div>
+              <div className="mt-5">
+                {group.image ? (
+                  <div className="mb-5 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={group.image} alt={group.title} className="h-44 w-full object-cover" />
                   </div>
-                  <span
-                    aria-hidden="true"
-                    className="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-700 transition-transform group-open:rotate-180 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400"
-                  >
-                    <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
-                      <path
-                        fillRule="evenodd"
-                        d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </span>
-                </summary>
-                <div className="mt-5">
-                  <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-400">
-                    {group.items.map((item) => (
-                      <li key={item} className="flex gap-3">
-                        <span className="mt-1 h-2 w-2 rounded-full bg-gtek-amber shrink-0" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </details>
+                ) : null}
+                <ul className="space-y-4 text-sm text-slate-700 dark:text-slate-400">
+                  {group.items.map((item) => (
+                    <li key={item.title} className="flex gap-3">
+                      <span className="mt-2 h-2 w-2 rounded-full bg-gtek-amber shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-800 dark:text-slate-200">{item.title}</p>
+                        {item.description ? <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">{item.description}</p> : null}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </Card>
           ))}
         </div>

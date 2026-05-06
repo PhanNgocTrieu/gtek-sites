@@ -8,15 +8,11 @@ export default function SiteFrame({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isStudioRoute = pathname.startsWith("/studio");
 
-  if (isStudioRoute) {
-    return <>{children}</>;
-  }
-
   return (
     <>
       <Navbar />
       <main className="flex-grow">{children}</main>
-      <Footer />
+      {!isStudioRoute ? <Footer /> : null}
     </>
   );
 }

@@ -5,9 +5,13 @@ export const siteSettingsQuery = groq`*[_type == "siteSettings" && _id == "siteS
   generalEmail,
   contactEmail,
   phone,
-  officeHours,
-  addressLines,
-  sectors
+  sectors,
+  contactResponsibleName,
+  contactCertificate,
+  contactPosition,
+  websiteUrl,
+  "contactLogo": contactLogo.asset->url,
+  "contactQrImage": contactQrImage.asset->url
 }`;
 
 export const homePageQuery = groq`*[_type == "homePage" && _id == "homePage"][0]{
@@ -18,7 +22,7 @@ export const homePageQuery = groq`*[_type == "homePage" && _id == "homePage"][0]
   servicesIntro,
   serviceCards[]{title, description},
   whyIntro,
-  whyItems[]{title, body},
+  whyItems[]{_key, title, body},
   closingHeadline,
   closingSubhead,
   closingCtaLabel
@@ -29,13 +33,16 @@ export const homePageQuery = groq`*[_type == "homePage" && _id == "homePage"][0]
 }`;
 
 export const aboutPageQuery = groq`*[_type == "aboutPage" && _id == "aboutPage"][0]{
+  narrativeItems[]{
+    title,
+    subtitle
+  },
   narrative[],
   teamMembers[]{
     name,
     title,
     credentials,
-    bio,
-    "photo": photo.asset->url
+    bio
   },
   affiliations[]
 }`;
@@ -53,6 +60,11 @@ export const projectsQuery = groq`*[_type == "project"]|order(category asc, titl
 
 export const serviceGroupsQuery = groq`*[_type == "service"]|order(title asc){
   title,
-  items
+  "image": image.asset->url,
+  items[]{
+    title,
+    description,
+    "image": image.asset->url
+  }
 }`;
 

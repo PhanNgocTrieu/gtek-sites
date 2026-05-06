@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="GTek Engineering">
+  <defs>
+    <linearGradient id="bg" x1="6" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0A192F"/>
+      <stop offset="1" stop-color="#132944"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="8" fill="url(#bg)"/>
+  <!-- Block G built from rounded rects  reads clearly at 16×16 -->
+  <rect x="7" y="7" width="4" height="18" rx="1.5" fill="#f8fafc"/>
+  <rect x="7" y="7" width="15" height="4" rx="1.5" fill="#f8fafc"/>
+  <rect x="7" y="21" width="12" height="4" rx="1.5" fill="#f8fafc"/>
+  <rect x="18.5" y="14.5" width="4" height="10.5" rx="1.5" fill="#f8fafc"/>
+  <!-- Brand accent -->
+  <rect x="24.5" y="6.5" width="3" height="7" rx="1" fill="#FFC107"/>
+</svg>
