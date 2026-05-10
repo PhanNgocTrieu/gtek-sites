@@ -1,10 +1,8 @@
 import Section from "@/components/ui/Section";
 import ProjectsClient, { type Project } from "@/app/projects/ProjectsClient";
+import SanityStudioFab from "@/components/layout/SanityStudioFab";
 import { projectsQuery, siteSettingsQuery } from "@/sanity/queries";
 import type { Metadata } from "next";
-import Link from "next/link";
-import Card from "@/components/ui/Card";
-import { isSanityConfigured } from "@/sanity/env";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -60,7 +58,6 @@ export default async function ProjectsPage() {
   const sanityProjects = preview
     ? await fetchModule.sanityFetchDraft<Project[]>(projectsQuery, {}, 0)
     : await fetchModule.sanityFetchPublished<Project[]>(projectsQuery, {}, 60);
-  const cmsEnabled = isSanityConfigured();
   const projectsHeroBackground = settings?.projectsHeroBackground;
   return (
     <main>
@@ -77,39 +74,14 @@ export default async function ProjectsPage() {
             Representative examples that demonstrate capability through personnel experience—presented with clear role
             attribution where projects were delivered at previous firms.
           </p>
-          <div className="mt-8">
-            <Card className="bg-white p-5 shadow-sm dark:bg-slate-900">
-              <p className="text-sm text-slate-700 leading-relaxed dark:text-slate-400">
-                <span className="font-semibold">No-code updates:</span> Add or edit projects in the content editor and
-                they appear here automatically.
-              </p>
-              <div className="mt-3 flex flex-col sm:flex-row gap-3">
-                <Link
-                  href="/studio"
-                  className="inline-flex items-center justify-center rounded-full bg-gtek-navy px-5 py-2.5 text-sm font-bold text-white hover:bg-gtek-navy/95"
-                >
-                  Open Content Editor
-                </Link>
-                <Link
-                  href="/editing"
-                  className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-bold text-slate-900 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
-                >
-                  How to add a project
-                </Link>
-                {!cmsEnabled ? (
-                  <span className="text-xs text-slate-500 self-center">
-                    Studio will show a setup screen until Sanity env is configured.
-                  </span>
-                ) : null}
-              </div>
-            </Card>
-          </div>
         </div>
       </Section>
 
       <Section className="bg-white py-14 dark:bg-slate-950">
         <ProjectsClient initialProjects={sanityProjects?.length ? sanityProjects : [...mockProjects]} />
       </Section>
+
+      <SanityStudioFab />
     </main>
   );
 }
