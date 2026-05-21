@@ -21,6 +21,8 @@ type AboutPageDoc = {
     title: string;
     credentials?: string;
     bio: string;
+    photo?: string;
+    showPhoto?: boolean;
   }>;
   affiliations?: string[];
 };
@@ -131,16 +133,25 @@ export default async function AboutPage() {
         </div>
 
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {team.map((p) => (
-            <Card key={p.name} className="p-6 hover:-translate-y-1 hover:shadow-md">
-              <p className="text-base font-extrabold text-slate-900 leading-snug dark:text-slate-200">{p.name}</p>
-              <p className="mt-1 text-sm font-semibold text-gtek-navy dark:text-slate-300">{p.title}</p>
-              {p.credentials ? (
-                <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-500">{p.credentials}</p>
-              ) : null}
-              <p className="mt-3 text-sm text-slate-700 leading-relaxed dark:text-slate-400">{p.bio}</p>
-            </Card>
-          ))}
+          {team.map((p) => {
+            const showMemberPhoto = p.showPhoto && p.photo;
+            return (
+              <Card key={p.name} className={`${showMemberPhoto ? "overflow-hidden" : ""} p-6 hover:-translate-y-1 hover:shadow-md`}>
+                {showMemberPhoto ? (
+                  <div className="-mx-6 -mt-6 mb-6 aspect-square w-[calc(100%+3rem)] bg-slate-100">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={p.photo} alt="" className="h-full w-full object-cover" />
+                  </div>
+                ) : null}
+                <p className="text-base font-extrabold text-slate-900 leading-snug dark:text-slate-200">{p.name}</p>
+                <p className="mt-1 text-sm font-semibold text-gtek-navy dark:text-slate-300">{p.title}</p>
+                {p.credentials ? (
+                  <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-500">{p.credentials}</p>
+                ) : null}
+                <p className="mt-3 text-sm text-slate-700 leading-relaxed dark:text-slate-400">{p.bio}</p>
+              </Card>
+            );
+          })}
         </div>
 
         <div className="mt-12">

@@ -14,7 +14,8 @@ export const siteSettingsQuery = groq`*[_type == "siteSettings" && _id == "siteS
   "contactQrImage": contactQrImage.asset->url,
   "servicesHeroBackground": servicesHeroBackground.asset->url,
   "projectsHeroBackground": projectsHeroBackground.asset->url,
-  "contactHeroBackground": contactHeroBackground.asset->url
+  "contactHeroBackground": contactHeroBackground.asset->url,
+  projectsDisplayMode
 }`;
 
 export const homePageQuery = groq`*[_type == "homePage" && _id == "homePage"][0]{
@@ -23,7 +24,12 @@ export const homePageQuery = groq`*[_type == "homePage" && _id == "homePage"][0]
   "heroBackground": heroBackground.asset->url,
   heroCtaLabel,
   servicesIntro,
-  serviceCards[]{title, description},
+  serviceCards[]{
+    title,
+    description,
+    showImage,
+    "image": image.asset->url
+  },
   whyIntro,
   whyItems[]{_key, title, body},
   closingHeadline,
@@ -46,12 +52,14 @@ export const aboutPageQuery = groq`*[_type == "aboutPage" && _id == "aboutPage"]
     name,
     title,
     credentials,
-    bio
+    bio,
+    showPhoto,
+    "photo": photo.asset->url
   },
   affiliations[]
 }`;
 
-export const projectsQuery = groq`*[_type == "project"]|order(category asc, title asc){
+export const projectsQuery = groq`*[_type == "project"]|order(sector asc, title asc){
   title,
   sector,
   client,

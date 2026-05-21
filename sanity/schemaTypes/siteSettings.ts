@@ -100,6 +100,19 @@ export const siteSettings = defineType({
       options: { hotspot: true },
     }),
     defineField({
+      name: "projectsDisplayMode",
+      title: "Projects display mode",
+      type: "string",
+      description: "Choose whether project cards show images or text-only layout.",
+      options: {
+        list: [
+          { title: "With images", value: "withImage" },
+          { title: "Without images", value: "withoutImage" },
+        ],
+      },
+      initialValue: "withImage",
+    }),
+    defineField({
       name: "contactHeroBackground",
       title: "Contact hero background",
       type: "image",

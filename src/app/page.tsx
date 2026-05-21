@@ -24,7 +24,12 @@ type HomePage = {
   heroBackground?: string;
   heroCtaLabel?: string;
   servicesIntro?: string;
-  serviceCards?: Array<{ title: string; description: string }>;
+  serviceCards?: Array<{
+    title: string;
+    description: string;
+    image?: string;
+    showImage?: boolean;
+  }>;
   whyIntro?: string;
   whyItems?: Array<{ _key?: string; title: string; body: string }>;
   closingHeadline?: string;
@@ -179,22 +184,33 @@ export default async function Home() {
         </div>
 
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {serviceCards.slice(0, 4).map((s) => (
-            <Card key={s.title} className="p-6 hover:-translate-y-1 hover:shadow-lg">
-              <div className="flex items-start gap-4">
-                <div className="mt-0.5 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-gtek-navy text-white">
-                  <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 20h16" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M7 16l5-8 5 8" />
-                  </svg>
+          {serviceCards.slice(0, 4).map((s) => {
+            const showCardImage = s.showImage && s.image;
+            return (
+              <Card key={s.title} className="overflow-hidden hover:-translate-y-1 hover:shadow-lg">
+                {showCardImage ? (
+                  <div className="aspect-[16/9] w-full bg-slate-100">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={s.image} alt="" className="h-full w-full object-cover" />
+                  </div>
+                ) : null}
+                <div className={`${showCardImage ? "p-6" : "p-6"} flex items-start gap-4`}>
+                  {!showCardImage ? (
+                    <div className="mt-0.5 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-gtek-navy text-white">
+                      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 20h16" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 16l5-8 5 8" />
+                      </svg>
+                    </div>
+                  ) : null}
+                  <div>
+                    <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-200">{s.title}</h3>
+                    <p className="mt-2 text-sm text-slate-600 leading-relaxed dark:text-slate-400">{s.description}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-200">{s.title}</h3>
-                  <p className="mt-2 text-sm text-slate-600 leading-relaxed dark:text-slate-400">{s.description}</p>
-                </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       </Section>
 

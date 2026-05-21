@@ -67,6 +67,19 @@ export const aboutPage = defineType({
             { name: "title", title: "Title", type: "string", validation: (Rule: any) => Rule.required().max(80) },
             { name: "credentials", title: "Credentials", type: "string", validation: (Rule: any) => Rule.max(80) },
             {
+              name: "photo",
+              title: "Photo",
+              type: "image",
+              options: { hotspot: true },
+            },
+            {
+              name: "showPhoto",
+              title: "Show photo",
+              type: "boolean",
+              description: "When enabled and a photo is uploaded, the photo appears on the team card.",
+              initialValue: false,
+            },
+            {
               name: "bio",
               title: "Bio line",
               type: "text",

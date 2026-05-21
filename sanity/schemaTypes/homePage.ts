@@ -71,6 +71,19 @@ export const homePage = defineType({
           fields: [
             { name: "title", title: "Title", type: "string", validation: (Rule: any) => Rule.required().max(40) },
             { name: "description", title: "Description", type: "string", validation: (Rule: any) => Rule.required().max(200) },
+            {
+              name: "image",
+              title: "Card image",
+              type: "image",
+              options: { hotspot: true },
+            },
+            {
+              name: "showImage",
+              title: "Show image",
+              type: "boolean",
+              description: "When enabled and an image is uploaded, the image appears on the card. Otherwise the default icon is shown.",
+              initialValue: false,
+            },
           ],
         },
       ],

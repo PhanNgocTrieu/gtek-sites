@@ -53,12 +53,19 @@ export default async function ProjectsPage() {
 
   const fetchModule = await import("@/sanity/fetch");
   const settings = preview
-    ? await fetchModule.sanityFetchDraft<{ projectsHeroBackground?: string }>(siteSettingsQuery, {}, 0)
-    : await fetchModule.sanityFetchPublished<{ projectsHeroBackground?: string }>(siteSettingsQuery, {}, 60);
+    ? await fetchModule.sanityFetchDraft<{
+        projectsHeroBackground?: string;
+        projectsDisplayMode?: "withImage" | "withoutImage";
+      }>(siteSettingsQuery, {}, 0)
+    : await fetchModule.sanityFetchPublished<{
+        projectsHeroBackground?: string;
+        projectsDisplayMode?: "withImage" | "withoutImage";
+      }>(siteSettingsQuery, {}, 60);
   const sanityProjects = preview
     ? await fetchModule.sanityFetchDraft<Project[]>(projectsQuery, {}, 0)
     : await fetchModule.sanityFetchPublished<Project[]>(projectsQuery, {}, 60);
   const projectsHeroBackground = settings?.projectsHeroBackground;
+  const projectsDisplayMode = settings?.projectsDisplayMode ?? "withImage";
   return (
     <main>
       <Section className={`py-16 ${projectsHeroBackground ? "relative overflow-hidden" : "bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950"}`}>
@@ -78,7 +85,10 @@ export default async function ProjectsPage() {
       </Section>
 
       <Section className="bg-white py-14 dark:bg-slate-950">
-        <ProjectsClient initialProjects={sanityProjects?.length ? sanityProjects : [...mockProjects]} />
+        <ProjectsClient
+          initialProjects={sanityProjects?.length ? sanityProjects : [...mockProjects]}
+          displayMode={projectsDisplayMode}
+        />
       </Section>
 
       <SanityStudioFab />

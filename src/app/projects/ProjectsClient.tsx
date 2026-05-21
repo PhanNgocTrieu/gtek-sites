@@ -53,7 +53,15 @@ function FilterButton({
   );
 }
 
-export default function ProjectsClient({ initialProjects }: { initialProjects: Project[] }) {
+export type ProjectsDisplayMode = "withImage" | "withoutImage";
+
+export default function ProjectsClient({
+  initialProjects,
+  displayMode = "withImage",
+}: {
+  initialProjects: Project[];
+  displayMode?: ProjectsDisplayMode;
+}) {
   const [active, setActive] = useState<(typeof categories)[number]>("All");
 
   const filtered = useMemo(() => {
@@ -96,22 +104,30 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
         ))}
       </div>
 
-      <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div
+        className={`mt-10 grid gap-6 ${
+          displayMode === "withoutImage"
+            ? "grid-cols-1 sm:grid-cols-2"
+            : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+        }`}
+      >
         {filtered.map((p) => (
           <Card key={`${p.sector}:${p.title}`} className="overflow-hidden hover:shadow-md transition-shadow">
-            <div className="aspect-[16/9] w-full bg-slate-100">
-              {p.image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={p.image} alt="" className="h-full w-full object-cover" />
-              ) : (
-                <div className="h-full w-full flex items-center justify-center">
-                  <div className="text-center px-6">
-                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Project image</p>
-                    <p className="mt-1 text-xs text-slate-500">16:9 landscape</p>
+            {displayMode === "withImage" ? (
+              <div className="aspect-[16/9] w-full bg-slate-100">
+                {p.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={p.image} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center">
+                    <div className="px-6 text-center">
+                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Project image</p>
+                      <p className="mt-1 text-xs text-slate-500">16:9 landscape</p>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            ) : null}
             <div className="p-6">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Project</p>
