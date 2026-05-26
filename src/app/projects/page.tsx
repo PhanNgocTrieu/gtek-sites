@@ -86,7 +86,7 @@ export default async function ProjectsPage() {
 
       <Section className="bg-white py-14 dark:bg-slate-950">
         <ProjectsClient
-          initialProjects={sanityProjects?.length ? sanityProjects : []}
+          initialProjects={sanityProjects?.length ? sanityProjects : [...mockProjects]}
           displayMode={projectsDisplayMode}
         />
       </Section>

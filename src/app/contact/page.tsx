@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import Section from "@/components/ui/Section";
@@ -119,12 +120,19 @@ export default async function ContactPage() {
                   </div>
 
                   <div className="flex flex-col items-center gap-4">
-                    <img src={contactLogo} alt="GTek Engineering logo" className="h-auto w-44 object-contain" />
-                    <img
+                    <Image
+                      src={contactLogo}
+                      alt="GTek Engineering logo"
+                      width={176}
+                      height={80}
+                      className="h-auto w-44 object-contain"
+                    />
+                    <Image
                       src={contactQrImage}
                       alt="QR code to GTek Engineering website"
+                      width={128}
+                      height={128}
                       className="h-32 w-32 bg-white p-1"
-                      loading="lazy"
                     />
                   </div>
                 </div>
