@@ -82,5 +82,15 @@ export const project = defineType({
       },
     }),
   ],
+  preview: {
+    select: { title: "title", sector: "sector", media: "mainImage" },
+    prepare({ title, sector, media }) {
+      return {
+        title,
+        subtitle: sector,
+        media,
+      };
+    },
+  },
 });
 

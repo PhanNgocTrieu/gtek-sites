@@ -39,10 +39,11 @@ export const service = defineType({
             },
             {
               name: "image",
-              title: "Legacy item image",
+              title: "Legacy item image (deprecated)",
               type: "image",
               options: { hotspot: true },
               description: "Old format. Prefer Group image above.",
+              hidden: ({ parent }) => !parent?.image,
             },
           ],
           preview: {

@@ -2,9 +2,14 @@
 
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 
-export default function SiteFrame({ children }: { children: React.ReactNode }) {
+export default function SiteFrame({
+  children,
+  footer,
+}: {
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+}) {
   const pathname = usePathname();
   const isStudioRoute = pathname.startsWith("/studio");
 
@@ -12,7 +17,7 @@ export default function SiteFrame({ children }: { children: React.ReactNode }) {
     <>
       <Navbar />
       <main className="flex-grow">{children}</main>
-      {!isStudioRoute ? <Footer /> : null}
+      {!isStudioRoute ? footer : null}
     </>
   );
 }

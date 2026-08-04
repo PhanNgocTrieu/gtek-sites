@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import SiteFrame from "@/components/layout/SiteFrame";
+import Footer from "@/components/layout/Footer";
 import ThemeScript from "@/components/theme/ThemeScript";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -52,7 +53,7 @@ export default function RootLayout({
       >
         <ThemeScript />
         <GoogleAnalytics />
-        <SiteFrame>{children}</SiteFrame>
+        <SiteFrame footer={<Footer />}>{children}</SiteFrame>
       </body>
     </html>
   );

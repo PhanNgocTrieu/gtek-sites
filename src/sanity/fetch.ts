@@ -9,9 +9,18 @@ export const SANITY_CACHE_TAG = "sanity";
 type FetchOpts = {
   revalidateSeconds?: number;
   useCdn?: boolean;
+  /** Use API token + draft perspective (for Studio preview cookie flows). */
+  drafts?: boolean;
 };
 
 function nextCacheOpts(revalidateSeconds: number) {
+  // revalidate: 0 / false = no Data Cache (needed in local/dev so CMS edits show immediately)
+  if (revalidateSeconds <= 0) {
+    return {
+      revalidate: 0 as const,
+      tags: [SANITY_CACHE_TAG],
+    };
+  }
   return {
     revalidate: revalidateSeconds,
     tags: [SANITY_CACHE_TAG],
@@ -25,7 +34,10 @@ export async function sanityFetch<T>(
 ) {
   if (!isSanityConfigured()) return null;
 
-  const client = getSanityClient({ useCdn: Boolean(opts.useCdn) });
+  const client = getSanityClient({
+    useCdn: Boolean(opts.useCdn),
+    withToken: Boolean(opts.drafts),
+  });
   if (!client) return null;
 
   try {
@@ -33,41 +45,36 @@ export async function sanityFetch<T>(
       next: nextCacheOpts(opts.revalidateSeconds ?? 60),
     });
     return data;
-  } catch {
+  } catch (err) {
+    if (process.env.NODE_ENV !== "production") {
+      console.error("[sanityFetch] query failed:", err);
+    }
     return null;
   }
 }
 
 /**
  * Published content for the live site.
- * Use API directly (not Sanity CDN): after publish, the CDN can briefly serve stale API responses,
- * which makes “publish → refresh site” feel slow even when Next.js revalidates.
+ * Uses the public API (no token) so a bad/mismatched SANITY_API_READ_TOKEN cannot break the site.
  */
 export async function sanityFetchPublished<T>(
   query: string,
   params?: Record<string, unknown>,
   revalidateSeconds = 10,
 ) {
-  return sanityFetch<T>(query, params, { revalidateSeconds, useCdn: false });
+  // In development, always bypass Next data cache so Studio edits appear after refresh.
+  const seconds = process.env.NODE_ENV === "development" ? 0 : revalidateSeconds;
+  return sanityFetch<T>(query, params, { revalidateSeconds: seconds, useCdn: false, drafts: false });
 }
 
 export async function sanityFetchDraft<T>(
   query: string,
   params?: Record<string, unknown>,
-  revalidateSeconds = 10,
+  revalidateSeconds = 0,
 ) {
-  if (!isSanityConfigured()) return null;
-
-  const client = getSanityClient({ useCdn: false });
-  if (!client) return null;
-
-  try {
-    const data = await client.fetch<T>(query, params ?? {}, {
-      next: nextCacheOpts(revalidateSeconds),
-    });
-    return data;
-  } catch {
-    return null;
-  }
+  return sanityFetch<T>(query, params, {
+    revalidateSeconds,
+    useCdn: false,
+    drafts: true,
+  });
 }
-

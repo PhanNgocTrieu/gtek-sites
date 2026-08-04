@@ -61,9 +61,7 @@ export default async function Home() {
     home?.heroSubhead ??
     "GTek Engineering is a Winnipeg-based geotechnical consultancy serving the dam safety, mining, foundation, and slope stability sectors across Canada.";
   const heroCtaLabel = home?.heroCtaLabel ?? "Talk to our team";
-  const heroBackground =
-    home?.heroBackground ??
-    "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=2200&q=80";
+  const heroBackground = home?.heroBackground ?? "/images/home-hero.jpg";
 
   const pageBackgroundType = home?.pageBackgroundType ?? "none";
   const pageBackgroundColor = home?.pageBackgroundColor ?? null;

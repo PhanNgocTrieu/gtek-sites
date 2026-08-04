@@ -1,18 +1,23 @@
-import { createClient } from "next-sanity";
+import { createClient, type SanityClient } from "next-sanity";
 import { sanityConfig } from "@/sanity/env";
 
-const _clients: Record<string, ReturnType<typeof createClient>> = {};
+const _clients: Record<string, SanityClient> = {};
 
-function clientCacheKey(useCdn: boolean) {
-  return `${sanityConfig.projectId}__${sanityConfig.dataset}__${useCdn ? "cdn" : "nocdn"}`;
+function clientCacheKey(useCdn: boolean, withToken: boolean) {
+  return `${sanityConfig.projectId}__${sanityConfig.dataset}__${useCdn ? "cdn" : "nocdn"}__${withToken ? "authed" : "public"}`;
 }
 
-export function getSanityClient(opts?: { useCdn?: boolean }) {
-  const useCdn = typeof opts?.useCdn === "boolean" ? opts!.useCdn : sanityConfig.useCdn;
+/**
+ * @param opts.withToken — pass true only when reading drafts / private datasets.
+ *   Published site content must NOT send a bad token (invalid tokens cause every query to 401).
+ */
+export function getSanityClient(opts?: { useCdn?: boolean; withToken?: boolean }) {
+  const useCdn = typeof opts?.useCdn === "boolean" ? opts.useCdn : sanityConfig.useCdn;
+  const withToken = Boolean(opts?.withToken && sanityConfig.token);
 
   if (!sanityConfig.projectId || !sanityConfig.dataset) return null;
 
-  const key = clientCacheKey(useCdn);
+  const key = clientCacheKey(useCdn, withToken);
   if (_clients[key]) return _clients[key];
 
   const client = createClient({
@@ -20,11 +25,9 @@ export function getSanityClient(opts?: { useCdn?: boolean }) {
     dataset: sanityConfig.dataset,
     apiVersion: sanityConfig.apiVersion,
     useCdn,
-    token: sanityConfig.token,
+    ...(withToken ? { token: sanityConfig.token, perspective: "previewDrafts" as const } : {}),
   });
 
   _clients[key] = client;
-
   return client;
 }
-
