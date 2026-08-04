@@ -15,7 +15,12 @@ export const siteSettingsQuery = groq`*[_type == "siteSettings" && _id == "siteS
   "servicesHeroBackground": servicesHeroBackground.asset->url,
   "projectsHeroBackground": projectsHeroBackground.asset->url,
   "contactHeroBackground": contactHeroBackground.asset->url,
-  projectsDisplayMode
+  projectsDisplayMode,
+  footerTagline,
+  "footerLogo": footerLogo.asset->url,
+  footerEmail,
+  footerLicenses,
+  footerCopyright
 }`;
 
 export const homePageQuery = groq`*[_type == "homePage" && _id == "homePage"][0]{
@@ -34,8 +39,7 @@ export const homePageQuery = groq`*[_type == "homePage" && _id == "homePage"][0]
   whyItems[]{_key, title, body},
   closingHeadline,
   closingSubhead,
-  closingCtaLabel
-  ,
+  closingCtaLabel,
   pageBackgroundType,
   pageBackgroundColor,
   "pageBackgroundImage": pageBackgroundImage.asset->url
@@ -79,4 +83,3 @@ export const serviceGroupsQuery = groq`*[_type == "service"]|order(title asc){
     "image": image.asset->url
   }
 }`;
-

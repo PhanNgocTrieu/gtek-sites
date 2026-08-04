@@ -62,7 +62,7 @@ function mapDocToPaths(type?: string, slug?: string | null) {
   switch (type) {
     case "homePage":
     case "siteSettings":
-      return ["/"];
+      return ["/", "/about", "/contact", "/projects", "/services"];
     case "project":
     case "projects":
       return ["/projects", slug ? `/projects/${slug}` : "/projects"];
@@ -70,8 +70,6 @@ function mapDocToPaths(type?: string, slug?: string | null) {
     case "services":
       return ["/services", slug ? `/services/${slug}` : "/services"];
     case "aboutPage":
-      return ["/about"];
-    case "author":
       return ["/about"];
     default:
       return ["/"];

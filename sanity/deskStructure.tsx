@@ -1,17 +1,29 @@
 import React from "react";
 import { type StructureBuilder } from "sanity/desk";
+import {
+  HomeIcon,
+  UsersIcon,
+  DocumentsIcon,
+  CogIcon,
+  ComponentIcon,
+  EarthGlobeIcon,
+  BlockElementIcon,
+} from "@sanity/icons";
 import { Box, Button, Card, Dialog, Flex, Stack, Text } from "@sanity/ui";
 import DeletePane from "./components/DeletePane";
 
 const PublishPane = (props: any) => {
-  const [dialog, setDialog] = React.useState<{ title: string; message: string; tone?: "critical" | "positive" } | null>(null);
+  const [dialog, setDialog] = React.useState<{ title: string; message: string; tone?: "critical" | "positive" } | null>(
+    null,
+  );
   const doc = props?.document?.displayed ?? {};
   const rawId: string | undefined = doc?._id || props.documentId;
   if (!rawId) return React.createElement("div", null, "No document id available.");
 
-  const siteUrl = (typeof window !== "undefined" && window.location.origin)
-    || (typeof process !== "undefined" && process.env.NEXT_PUBLIC_SITE_URL)
-    || "http://localhost:3000";
+  const siteUrl =
+    (typeof window !== "undefined" && window.location.origin) ||
+    (typeof process !== "undefined" && process.env.NEXT_PUBLIC_SITE_URL) ||
+    "http://localhost:3000";
 
   function computeRedirectPath(document: any) {
     const type = document?._type;
@@ -26,8 +38,6 @@ const PublishPane = (props: any) => {
       case "service":
         return slug ? `/services/${slug}` : "/services";
       case "aboutPage":
-        return "/about";
-      case "author":
         return "/about";
       default:
         return "/";
@@ -123,16 +133,17 @@ const PublishPane = (props: any) => {
 
   return (
     <>
-      <Card padding={4}>
+      <Card padding={4} radius={3} shadow={1} tone="transparent">
         <Stack space={4}>
           <Text size={2} weight="semibold">
-            Published Content
+            Publish to live site
           </Text>
           <Text size={1} muted>
-            Preview mode has been removed. Use this button to clear cache and refresh published pages.
+            After saving and publishing your changes, use this button to clear the site cache so visitors see the latest
+            content immediately.
           </Text>
           <Flex>
-            <Button text="Refresh Published" tone="primary" onClick={refreshPublished} />
+            <Button text="Refresh published site" tone="primary" onClick={refreshPublished} />
           </Flex>
         </Stack>
       </Card>
@@ -162,88 +173,102 @@ const previewViews = (S: StructureBuilder) => [
   S.view.component(PublishPane).title("Publish") as any,
 ];
 
+const collectionViews = (S: StructureBuilder) => [
+  S.view.form(),
+  S.view.component(PublishPane).title("Publish") as any,
+  S.view.component(DeletePane).title("Delete") as any,
+];
+
+function singleton(
+  S: StructureBuilder,
+  opts: {
+    id: string;
+    documentId: string;
+    schemaType: string;
+    title: string;
+    icon?: React.ComponentType;
+  },
+) {
+  return S.listItem()
+    .id(opts.id)
+    .title(opts.title)
+    .icon(opts.icon)
+    .child(S.document().schemaType(opts.schemaType).documentId(opts.documentId).views(previewViews(S)));
+}
+
 export const deskStructure = (S: StructureBuilder) =>
   S.list()
-    .title("GTek Content")
+    .title("GTek Studio")
     .items([
       S.listItem()
-        .id("contacts")
-        .title("Contacts")
+        .title("Pages")
+        .icon(DocumentsIcon)
         .child(
           S.list()
-            .id("contacts-list")
-            .title("Contacts")
+            .title("Pages")
+            .items([
+              singleton(S, {
+                id: "home-page",
+                documentId: "homePage",
+                schemaType: "homePage",
+                title: "Home",
+                icon: HomeIcon,
+              }),
+              singleton(S, {
+                id: "about-page",
+                documentId: "aboutPage",
+                schemaType: "aboutPage",
+                title: "About",
+                icon: UsersIcon,
+              }),
+            ]),
+        ),
+
+      S.divider(),
+
+      S.listItem()
+        .title("Content library")
+        .icon(ComponentIcon)
+        .child(
+          S.list()
+            .title("Content library")
             .items([
               S.listItem()
-                .id("shortcut-contact-details")
-                .title("Contact Details")
+                .id("projects")
+                .title("Projects")
+                .icon(EarthGlobeIcon)
+                .schemaType("project")
                 .child(
-                  S.document().schemaType("siteSettings").documentId("siteSettings").views(previewViews(S))
+                  S.documentTypeList("project")
+                    .title("Projects")
+                    .defaultOrdering([{ field: "sector", direction: "asc" }, { field: "title", direction: "asc" }])
+                    .child((docId) =>
+                      S.document().schemaType("project").documentId(docId).views(collectionViews(S)),
+                    ),
+                ),
+              S.listItem()
+                .id("service-groups")
+                .title("Service groups")
+                .icon(BlockElementIcon)
+                .schemaType("service")
+                .child(
+                  S.documentTypeList("service")
+                    .title("Service groups")
+                    .defaultOrdering([{ field: "title", direction: "asc" }])
+                    .child((docId) =>
+                      S.document().schemaType("service").documentId(docId).views(collectionViews(S)),
+                    ),
                 ),
             ]),
         ),
-      S.listItem()
-        .id("site-settings")
-        .title("Site Settings")
-        .child(S.document().schemaType("siteSettings").documentId("siteSettings").views(previewViews(S))),
-      S.listItem()
-        .id("home-page")
-        .title("Home Page")
-        .child(S.document().schemaType("homePage").documentId("homePage").views(previewViews(S))),
-      S.listItem()
-        .id("about-page")
-        .title("About Page")
-        .child(S.document().schemaType("aboutPage").documentId("aboutPage").views(previewViews(S))),
+
       S.divider(),
-      S.listItem()
-        .id("projects")
-        .title("Projects")
-        .schemaType("project")
-        .child(
-          S.documentTypeList("project")
-            .title("Projects")
-            .defaultOrdering([{ field: "title", direction: "asc" }])
-            .child((docId) =>
-              S.document()
-                .schemaType("project")
-                .documentId(docId)
-                .views([S.view.form(), S.view.component(PublishPane).title("Publish") as any, S.view.component(DeletePane).title("Delete") as any])
-            )
-        ),
-      S.listItem()
-        .id("service-groups")
-        .title("Service Groups")
-        .schemaType("service")
-        .child(
-          S.documentTypeList("service")
-            .title("Service Groups")
-            .defaultOrdering([{ field: "title", direction: "asc" }])
-            .child((docId) =>
-              S.document()
-                .schemaType("service")
-                .documentId(docId)
-                .views([S.view.form(), S.view.component(PublishPane).title("Publish") as any, S.view.component(DeletePane).title("Delete") as any])
-            )
-        ),
-      S.listItem()
-        .id("author-bio")
-        .title("Author / Bio")
-        .schemaType("author")
-        .child(
-          S.documentTypeList("author")
-            .title("Author / Bio")
-            .defaultOrdering([{ field: "name", direction: "asc" }])
-        ),
-      S.divider(),
-      ...S.documentTypeListItems().filter((item) => {
-        const id = item.getId();
-        return (
-          id !== "siteSettings" &&
-          id !== "homePage" &&
-          id !== "aboutPage" &&
-          id !== "project" &&
-          id !== "service" &&
-          id !== "author"
-        );
+
+      singleton(S, {
+        id: "site-settings",
+        documentId: "siteSettings",
+        schemaType: "siteSettings",
+        title: "Site settings",
+        icon: CogIcon,
       }),
     ]);

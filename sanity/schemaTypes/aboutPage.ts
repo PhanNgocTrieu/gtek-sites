@@ -4,19 +4,23 @@ export const aboutPage = defineType({
   name: "aboutPage",
   title: "About Page",
   type: "document",
+  groups: [
+    { name: "hero", title: "Hero", default: true },
+    { name: "narrative", title: "Company story" },
+    { name: "team", title: "Team" },
+    { name: "affiliations", title: "Affiliations" },
+  ],
   preview: {
     select: {
       narrativeItems: "narrativeItems",
-      narrative: "narrative",
       teamMembers: "teamMembers",
     },
-    prepare({ narrativeItems, narrative, teamMembers }) {
+    prepare({ narrativeItems, teamMembers }) {
       const sections = Array.isArray(narrativeItems) ? narrativeItems.filter(Boolean).length : 0;
-      const paragraphs = Array.isArray(narrative) ? narrative.filter(Boolean).length : 0;
       const members = Array.isArray(teamMembers) ? teamMembers.filter(Boolean).length : 0;
       return {
         title: "About Page",
-        subtitle: `${sections || paragraphs} narrative section(s) • ${members} team member(s)`,
+        subtitle: `${sections} story section(s) • ${members} team member(s)`,
       };
     },
   },
@@ -26,12 +30,14 @@ export const aboutPage = defineType({
       title: "Hero background image",
       description: "Background image behind the About intro section.",
       type: "image",
+      group: "hero",
       options: { hotspot: true },
     }),
     defineField({
       name: "narrativeItems",
       title: "Company narrative sections",
       type: "array",
+      group: "narrative",
       of: [
         {
           type: "object",
@@ -45,20 +51,26 @@ export const aboutPage = defineType({
         },
       ],
       validation: (Rule) => Rule.max(12),
-      description: "Use this for blocks like 'Who we are' + subtitle. You can add as many sections as needed.",
+      description: "Blocks like 'Who we are' with a subtitle. Add as many sections as needed.",
     }),
     defineField({
       name: "narrative",
-      title: "Legacy narrative (paragraphs)",
+      title: "Legacy narrative (deprecated)",
       type: "array",
       of: [{ type: "text" }],
+      group: "narrative",
       validation: (Rule) => Rule.max(6),
-      description: "Old format. Keep empty if you use 'Company narrative sections' above.",
+      description: "Old format — only visible if legacy data exists. Use Company narrative sections instead.",
+      hidden: ({ document }) => {
+        const legacy = document?.narrative;
+        return !Array.isArray(legacy) || legacy.length === 0;
+      },
     }),
     defineField({
       name: "teamMembers",
       title: "Team members",
       type: "array",
+      group: "team",
       of: [
         {
           type: "object",
@@ -88,6 +100,9 @@ export const aboutPage = defineType({
               description: "Supports long text. Keep it concise but can be up to 1200 characters.",
             },
           ],
+          preview: {
+            select: { title: "name", subtitle: "title", media: "photo" },
+          },
         },
       ],
       validation: (Rule) => Rule.max(12),
@@ -97,8 +112,8 @@ export const aboutPage = defineType({
       title: "Credentials & affiliations",
       type: "array",
       of: [{ type: "string" }],
+      group: "affiliations",
       validation: (Rule) => Rule.max(12),
     }),
   ],
 });
-
