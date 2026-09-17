@@ -10,6 +10,16 @@ function clamp(s: string, max: number) {
   return s.length > max ? s.slice(0, max) : s;
 }
 
+function usesResendTestSender(from: string) {
+  return /@resend\.dev/i.test(from);
+}
+
+function resendErrorDetail(error: unknown): string {
+  if (!error || typeof error !== "object") return String(error ?? "");
+  const e = error as { message?: unknown };
+  return typeof e.message === "string" ? e.message : JSON.stringify(error);
+}
+
 export async function POST(req: Request) {
   let form: FormData;
   try {
@@ -25,7 +35,9 @@ export async function POST(req: Request) {
   const subject = form.get("subject");
   const website = form.get("website");
 
-  console.log("name ${name}, company: ${company}, email: ${email}, message: ${message}, subject: ${subject}, website: ${website}");
+  console.log(
+    `name ${String(name)}, company: ${String(company)}, email: ${String(email)}, message: ${String(message)}, subject: ${String(subject)}, website: ${String(website)}`,
+  );
 
   // Honeypot: if filled, treat as spam and return success (avoid feedback loops).
   if (typeof website === "string" && website.trim().length > 0) {
@@ -42,20 +54,16 @@ export async function POST(req: Request) {
   const safeMessage = clamp(message.trim(), 5000);
   const safeSubject = clamp(subject.trim(), 80);
 
-  // tracing log
-  console.log("Sending contact email from:", safeEmail, "to:", process.env.CONTACT_TO_EMAIL, "subject:", safeSubject);
-
   const apiKey = process.env.RESEND_API_KEY;
   const envToEmail = process.env.CONTACT_TO_EMAIL?.trim();
-  let toEmail = envToEmail || "contact@gtekengineering.ca";
+  let toEmail = envToEmail || "wayne.wong@gtekeng.com";
   const fromEmail = process.env.CONTACT_FROM_EMAIL?.trim() || "GTek Website <onboarding@resend.dev>";
   const ackFromEmail = process.env.CONTACT_ACK_FROM_EMAIL?.trim() || fromEmail;
-  const sendAck = true;
+  const sendAck = (process.env.CONTACT_SEND_ACK ?? "").trim().toLowerCase() === "true";
+  const testSender = usesResendTestSender(fromEmail);
 
-  // Production: Sanity contactEmail wins when set.
-  // Development: keep an explicit CONTACT_TO_EMAIL so local Resend tests can
-  // land in the tester inbox (the Resend test sender only delivers to the account email).
-  if (process.env.NODE_ENV === "production" || !envToEmail) {
+  // CMS contactEmail (@gtekeng.com) only works after gtekeng.com is verified on Resend.
+  if (!testSender) {
     try {
       const client = getSanityClient({ useCdn: true });
       if (client) {
@@ -68,6 +76,8 @@ export async function POST(req: Request) {
       // ignore and fallback to env/default
     }
   }
+
+  console.log("Sending contact inquiry replyTo:", safeEmail, "to:", toEmail, "from:", fromEmail, "subject:", safeSubject);
 
   if (!apiKey) {
     return NextResponse.json(
@@ -113,14 +123,12 @@ export async function POST(req: Request) {
     });
 
     if (inquiry.error) {
+      const detail = resendErrorDetail(inquiry.error);
       console.error("Resend inquiry send failed:", inquiry.error);
-      return NextResponse.json(
-        { message: resendUserMessage(inquiry.error.message) },
-        { status: 502 },
-      );
+      return NextResponse.json({ message: resendUserMessage(detail) }, { status: 502 });
     }
 
-    if (sendAck) {
+    if (sendAck && (!testSender || safeEmail.toLowerCase() === toEmail.toLowerCase())) {
       const ack = await resend.emails.send({
         from: ackFromEmail,
         to: [safeEmail],
@@ -138,8 +146,10 @@ export async function POST(req: Request) {
         console.error("Resend acknowledgement send failed:", ack.error);
       }
     }
-  } catch {
-    return NextResponse.json({ message: "Failed to send message. Please try again later." }, { status: 502 });
+  } catch (err) {
+    console.error("Contact send threw:", err);
+    const detail = err instanceof Error ? err.message : resendErrorDetail(err);
+    return NextResponse.json({ message: resendUserMessage(detail) }, { status: 502 });
   }
 
   return NextResponse.json({ message: "Thanks — your message was sent." }, { status: 200 });
@@ -147,10 +157,10 @@ export async function POST(req: Request) {
 
 function resendUserMessage(detail: string) {
   if (/domain is not verified/i.test(detail)) {
-    return "Email could not be sent: the From address must use a Resend-verified domain (or onboarding@resend.dev for local tests).";
+    return "Email could not be sent: the From address must use a Resend-verified domain (or onboarding@resend.dev for tests).";
   }
-  if (/only send testing emails/i.test(detail)) {
-    return "Email could not be sent: the Resend test sender can only deliver to the email on your Resend account.";
+  if (/only send testing emails|own email address/i.test(detail)) {
+    return "Email could not be sent: the Resend test sender can only deliver to the email on your Resend account. Verify gtekeng.com at resend.com/domains, then set CONTACT_FROM_EMAIL to an address on that domain (e.g. noreply@gtekeng.com).";
   }
   return "Failed to send message. Please try again later.";
 }
