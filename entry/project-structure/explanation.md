@@ -9,7 +9,7 @@ Top-level files
 - `.env.local.example` — environment variable template.
 
 Sanity configuration and schemas
-- `sanity.config.ts` — Studio configuration. It consumes `NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET` (so Studio knows which project/dataset to show).
+- `sanity.config.ts` — Studio configuration. It consumes `NEXT_SANITY_PROJECT_ID` and `NEXT_SANITY_DATASET` (so Studio knows which project/dataset to show).
 - `sanity/schemaTypes/*` — Sanity schema files that define content models: `project.ts`, `service.ts`, `author.ts`, `homePage.ts`, `aboutPage.ts`, `siteSettings.ts`, and `index.ts` that aggregates them. These determine the fields and editor UI shown in Studio.
 - `sanity/deskStructure.ts` — custom desk structure for the Studio (control editor UI order/collections).
 

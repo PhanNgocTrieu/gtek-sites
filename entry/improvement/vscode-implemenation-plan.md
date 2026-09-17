@@ -37,7 +37,7 @@ Detailed tasks
     - `README.md` — add exact env setup steps for local and Vercel.
     - `src/sanity/env.ts` — assert missing required env and throw early in server context.
   - Steps:
-    1. Add validation in `src/sanity/env.ts` to throw if `NEXT_PUBLIC_SANITY_PROJECT_ID` or `NEXT_PUBLIC_SANITY_DATASET` missing during startup and to log warnings if server-only token absent for dev preview.
+    1. Add validation in `src/sanity/env.ts` to throw if `NEXT_SANITY_PROJECT_ID` or `NEXT_SANITY_DATASET` missing during startup and to log warnings if server-only token absent for dev preview.
     2. Add README section showing how to add Vercel env vars and which variables must be `NEXT_PUBLIC_` vs server-only.
   - Acceptance: local dev fails fast if public vars missing; production envs set via host and token not present in client bundles.
 
