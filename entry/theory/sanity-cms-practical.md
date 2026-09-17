@@ -3,7 +3,7 @@ Practical Guide — Getting an API Key, Applying It, and Real-life Workflow
 This document complements `theory/sanity-cms.md` with clear, actionable steps for configuring Sanity with this Next.js project, obtaining API tokens, testing locally, and enabling editors to manage content without code.
 
 Files to check in this repo:
-- `sanity.config.ts` — reads `NEXT_SANITY_PROJECT_ID` and `NEXT_SANITY_DATASET` for the embedded Studio.
+- `sanity.config.ts` — reads `NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET` for the embedded Studio.
 - `src/sanity/env.ts` — the app's canonical Sanity configuration (projectId, dataset, apiVersion, useCdn, token).
 - `src/sanity/client.ts` — creates `next-sanity` client using `env.ts`.
 
@@ -25,9 +25,9 @@ Files to check in this repo:
 - Locally create a `.env.local` (DO NOT commit). Example:
 
 ```
-NEXT_SANITY_PROJECT_ID=your_project_id_here
-NEXT_SANITY_DATASET=production
-NEXT_SANITY_API_VERSION=2024-01-01
+NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id_here
+NEXT_PUBLIC_SANITY_DATASET=production
+NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01
 SANITY_API_READ_TOKEN=skYourTokenHere
 ```
 
@@ -54,9 +54,9 @@ Example `scripts/test-sanity.js`:
 import { createClient } from 'next-sanity';
 
 const client = createClient({
-  projectId: process.env.NEXT_SANITY_DATASET,
-  dataset: process.env.NEXT_SANITY_DATASET,
-  apiVersion: process.env.NEXT_SANITY_API_VERSION || '2024-01-01',
+  projectId: process.env.NEXT_PUBLIC_SANITY_DATASET,
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
+  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01',
   useCdn: false,
   token: process.env.SANITY_API_READ_TOKEN,
 });

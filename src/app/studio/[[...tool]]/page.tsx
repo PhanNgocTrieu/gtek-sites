@@ -17,13 +17,13 @@ export default function StudioPage() {
             </p>
             <ul className="mt-4 list-disc pl-6 text-sm text-slate-700 space-y-1">
               <li>
-                <code className="font-semibold">NEXT_SANITY_PROJECT_ID</code>
+                <code className="font-semibold">NEXT_PUBLIC_SANITY_PROJECT_ID</code>
               </li>
               <li>
-                <code className="font-semibold">NEXT_SANITY_DATASET</code>
+                <code className="font-semibold">NEXT_PUBLIC_SANITY_DATASET</code>
               </li>
               <li>
-                <code className="font-semibold">NEXT_SANITY_API_VERSION</code> (optional)
+                <code className="font-semibold">NEXT_PUBLIC_SANITY_API_VERSION</code> (optional)
               </li>
             </ul>
             <p className="mt-6 text-sm text-slate-600">

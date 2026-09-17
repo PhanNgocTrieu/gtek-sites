@@ -119,9 +119,9 @@ Kế hoạch triển khai “CMS-first”:
 ### 5.3 Checklist môi trường (env vars)
 Vercel (Production):
 - Sanity:
-  - `NEXT_SANITY_PROJECT_ID`
-  - `NEXT_SANITY_DATASET`
-  - `NEXT_SANITY_API_VERSION`
+  - `NEXT_PUBLIC_SANITY_PROJECT_ID`
+  - `NEXT_PUBLIC_SANITY_DATASET`
+  - `NEXT_PUBLIC_SANITY_API_VERSION`
   - (Nếu dataset private / cần đọc token) `SANITY_API_READ_TOKEN`
 - Contact email (Resend):
   - `RESEND_API_KEY`

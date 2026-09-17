@@ -4,7 +4,7 @@ Overview
 - Frontend: Next.js 14 (app router) — renders site UI, embeds Sanity Studio at `/studio` via `NextStudio`.
 - CMS: Sanity (Studio + Content Lake) — stores documents (project, author, service, pages).
 - Hosting: (recommended) Vercel for Next.js; Sanity is hosted by Sanity.io.
-- Dev: local `.env.local` with `NEXT_SANITY_PROJECT_ID`, `NEXT_SANITY_DATASET`, and `SANITY_API_READ_TOKEN` for server-side reads.
+- Dev: local `.env.local` with `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, and `SANITY_API_READ_TOKEN` for server-side reads.
 
 ASCII diagram (high level)
 
@@ -33,9 +33,9 @@ Operational flows
   - Requires a server-side token and preview routes to fetch draft content for logged-in editors.
 
 Key configuration & env variables
-- `NEXT_SANITY_PROJECT_ID` (public) — identifies the Sanity project.
-- `NEXT_SANITY_DATASET` (public) — dataset (e.g., `production`).
-- `NEXT_SANITY_API_VERSION` (public) — date string for API versioning.
+- `NEXT_PUBLIC_SANITY_PROJECT_ID` (public) — identifies the Sanity project.
+- `NEXT_PUBLIC_SANITY_DATASET` (public) — dataset (e.g., `production`).
+- `NEXT_PUBLIC_SANITY_API_VERSION` (public) — date string for API versioning.
 - `SANITY_API_READ_TOKEN` (server only) — secret token for server-side reads or drafts.
 
 Notes
