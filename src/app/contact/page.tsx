@@ -26,6 +26,15 @@ type SiteSettings = {
   contactHeroBackground?: string;
 };
 
+function toNextImageSrc(src: string | undefined, fallback: string) {
+  const raw = (src ?? "").trim() || fallback;
+  if (/^https?:\/\//i.test(raw) || raw.startsWith("data:") || raw.startsWith("blob:")) {
+    return raw;
+  }
+  const withoutPublic = raw.replace(/^\/?public\//, "/");
+  return withoutPublic.startsWith("/") ? withoutPublic : `/${withoutPublic}`;
+}
+
 export default async function ContactPage() {
   const { cookies } = await import("next/headers");
   const cookieStore = cookies();
@@ -35,18 +44,16 @@ export default async function ContactPage() {
   const settings = preview
     ? await fetchModule.sanityFetchDraft<SiteSettings>(siteSettingsQuery, {}, 0)
     : await fetchModule.sanityFetchPublished<SiteSettings>(siteSettingsQuery, {}, 60);
-  const companyName = settings?.companyName ?? "GTek Engineering Inc.";
-  const generalEmail = settings?.generalEmail ?? "info@gtek.ca";
-  const phone = settings?.phone ?? "[office phone]";
+  const companyName = settings?.companyName ?? "GTek Engineering";
+  const generalEmail = settings?.generalEmail ?? "wayne.wong@gtekeng.com";
+  const phone = settings?.phone ?? "+1 (204) 792-8829";
   const contactResponsibleName = settings?.contactResponsibleName ?? "Wayne (WK) Wong";
   const contactCertificate = settings?.contactCertificate ?? "M.Eng., P.Eng.";
   const contactPosition = settings?.contactPosition ?? "Principal Geotechnical Engineer, President";
   const websiteUrl = settings?.websiteUrl ?? "https://www.gtekeng.com";
   const websiteLabel = websiteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
-  const contactLogo = settings?.contactLogo ?? "/images/gtek-logo.png";
-  const contactQrImage =
-    settings?.contactQrImage ??
-    "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https%3A%2F%2Fwww.gtekeng.com";
+  const contactLogo = toNextImageSrc(settings?.contactLogo, "/images/gtek-logo.png");
+  const contactQrImage = toNextImageSrc(settings?.contactQrImage, "/images/contact/qr.jpg");;
   const contactHeroBackground = settings?.contactHeroBackground;
 
   return (

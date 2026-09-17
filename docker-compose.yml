@@ -1,0 +1,43 @@
+# GTek website — development stack (Next.js + embedded Sanity Studio).
+#
+# Ubuntu (first time):
+#   ./docker/install-ubuntu.sh
+#   ./docker/up.sh
+#
+# Other platforms (Docker Desktop / Engine already installed):
+#   ./docker/up.sh
+#
+# App:    http://localhost:3000
+# Studio: http://localhost:3000/studio
+#
+# Sanity Content Lake is hosted by Sanity.io — no extra CMS container.
+
+name: gtek-sites
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: gtek-sites:dev
+    init: true
+    ports:
+      - "${PORT:-3000}:3000"
+    env_file:
+      - .env.local
+    environment:
+      NODE_ENV: development
+      NEXT_TELEMETRY_DISABLED: "1"
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+    volumes:
+      - .:/app
+      - gtek_node_modules:/app/node_modules
+      - gtek_next:/app/.next
+    stdin_open: true
+    tty: true
+
+volumes:
+  gtek_node_modules:
+  gtek_next:

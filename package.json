@@ -4,9 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "NODE_OPTIONS='--no-experimental-webstorage' WATCHPACK_POLLING=true next dev",
+    "dev:docker": "WATCHPACK_POLLING=true next dev --hostname 0.0.0.0 --port 3000",
     "build": "NODE_OPTIONS='--no-experimental-webstorage' next build",
+    "build:docker": "next build",
     "start": "NODE_OPTIONS='--no-experimental-webstorage' next start",
-    "lint": "next lint"
+    "start:docker": "next start --hostname 0.0.0.0 --port 3000",
+    "lint": "next lint",
+    "test:resend": "node --test tests/resend.live.test.mjs"
   },
   "dependencies": {
     "@sanity/vision": "^3.77.2",
@@ -26,6 +30,7 @@
     "eslint-config-next": "14.2.35",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.7"
   }
 }

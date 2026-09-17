@@ -73,7 +73,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         message:
-          "Email service is not configured yet. Please email contact@gtekengineering.ca directly (RESEND_API_KEY missing).",
+          "Email service is not configured yet. Please email wayne.wong@gtekeng.com directly.",
       },
       { status: 500 },
     );

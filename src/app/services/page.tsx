@@ -10,10 +10,24 @@ export const metadata: Metadata = {
     "Geotechnical engineering, dam safety & instrumentation support, construction support, and materials testing services in Winnipeg, Manitoba.",
 };
 
+
+function toNextImageSrc(src: string | undefined, fallback: string) {
+  const raw = (src ?? "").trim() || fallback;
+  if (/^https?:\/\//i.test(raw) || raw.startsWith("data:") || raw.startsWith("blob:")) {
+    return raw;
+  }
+  const withoutPublic = raw.replace(/^\/?public\//, "/");
+  return withoutPublic.startsWith("/") ? withoutPublic : `/${withoutPublic}`;
+}
+
+const serviceImagesMapping = [
+  "", "", "", ""
+]
+
 const serviceGroups = [
   {
     title: "Geotechnical Engineering",
-    image: "",
+    image: serviceImagesMapping[0],
     items: [
       "Geotechnical investigations & reporting",
       "Subsurface exploration planning",
@@ -31,7 +45,7 @@ const serviceGroups = [
   },
   {
     title: "Dam Safety, Instrumentation & Management",
-    image: "",
+    image: serviceImagesMapping[1],
     items: [
       "Dam safety reviews and assessments",
       "Instrumentation selection and layout",
@@ -46,7 +60,7 @@ const serviceGroups = [
   },
   {
     title: "Project Administration & Construction Support",
-    image: "",
+    image: serviceImagesMapping[2],
     items: [
       "Field coordination and schedule alignment",
       "Contractor / stakeholder coordination",
@@ -56,7 +70,7 @@ const serviceGroups = [
   },
   {
     title: "Material Testing",
-    image: "",
+    image: serviceImagesMapping[3],
     items: [
       "Compaction testing and verification",
       "Concrete testing (as required)",
@@ -116,7 +130,10 @@ export default async function ServicesPage() {
       );
   const servicesHeroBackground = settings?.servicesHeroBackground;
 
-  const groups = (sanityGroups ?? serviceGroups)
+  const sourceGroups =
+    Array.isArray(sanityGroups) && sanityGroups.length > 0 ? sanityGroups : serviceGroups;
+
+  const groups = sourceGroups
     .filter((group): group is NonNullable<typeof group> => Boolean(group))
     .map((group) => ({
       title: (group.title ?? "").trim(),

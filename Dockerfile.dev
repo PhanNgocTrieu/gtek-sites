@@ -1,0 +1,28 @@
+# Development image for GTek Next.js + embedded Sanity Studio.
+# Bind-mounts the repo for hot reload. Use: docker compose up --build
+
+FROM node:20-bookworm-slim
+
+WORKDIR /app
+
+ENV NODE_ENV=development \
+    NEXT_TELEMETRY_DISABLED=1 \
+    WATCHPACK_POLLING=true \
+    CHOKIDAR_USEPOLLING=true
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY docker/entrypoint-dev.sh /usr/local/bin/entrypoint-dev.sh
+RUN chmod +x /usr/local/bin/entrypoint-dev.sh
+
+COPY . .
+
+EXPOSE 3000
+
+ENTRYPOINT ["entrypoint-dev.sh"]
+CMD ["npm", "run", "dev:docker"]
