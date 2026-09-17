@@ -10,16 +10,6 @@ export const metadata: Metadata = {
     "Geotechnical engineering, dam safety & instrumentation support, construction support, and materials testing services in Winnipeg, Manitoba.",
 };
 
-
-function toNextImageSrc(src: string | undefined, fallback: string) {
-  const raw = (src ?? "").trim() || fallback;
-  if (/^https?:\/\//i.test(raw) || raw.startsWith("data:") || raw.startsWith("blob:")) {
-    return raw;
-  }
-  const withoutPublic = raw.replace(/^\/?public\//, "/");
-  return withoutPublic.startsWith("/") ? withoutPublic : `/${withoutPublic}`;
-}
-
 const serviceImagesMapping = [
   "", "", "", ""
 ]
