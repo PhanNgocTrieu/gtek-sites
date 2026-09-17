@@ -50,7 +50,7 @@ export async function POST(req: Request) {
   let toEmail = envToEmail || "contact@gtekengineering.ca";
   const fromEmail = process.env.CONTACT_FROM_EMAIL?.trim() || "GTek Website <onboarding@resend.dev>";
   const ackFromEmail = process.env.CONTACT_ACK_FROM_EMAIL?.trim() || fromEmail;
-  const sendAck = (process.env.CONTACT_SEND_ACK ?? "").trim().toLowerCase() === "true";
+  const sendAck = true;
 
   // Production: Sanity contactEmail wins when set.
   // Development: keep an explicit CONTACT_TO_EMAIL so local Resend tests can
