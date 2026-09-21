@@ -117,7 +117,7 @@ const config = {
       },
       {
         title: "Direct access, fast response.",
-        body: ": GTek operates without the organizational layers that slow larger consultancies. Clients work directly with decision-makers from day one and receive timely answers throughout the project.",
+        body: "GTek operates without the organizational layers that slow larger consultancies. Clients work directly with decision-makers from day one and receive timely answers throughout the project.",
       },
       {
         title: "Specialized technical depth.",
