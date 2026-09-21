@@ -9,6 +9,7 @@ export const service = defineType({
       name: "title",
       title: "Title",
       type: "string",
+      description: "Name of this service group (for example, Dam Safety).",
       validation: (Rule) => Rule.required().max(120),
     }),
     defineField({
@@ -51,7 +52,8 @@ export const service = defineType({
           },
         },
       ],
-      validation: (Rule) => Rule.required().min(1).max(50),
+      validation: (Rule) => Rule.max(50),
+      description: "Each item appears as a bullet on the Services page. Leave description blank if you only need a title.",
     }),
   ],
 });

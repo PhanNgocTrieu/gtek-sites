@@ -8,6 +8,7 @@ import {
   ComponentIcon,
   EarthGlobeIcon,
   BlockElementIcon,
+  EnvelopeIcon,
 } from "@sanity/icons";
 import { Box, Button, Card, Dialog, Flex, Stack, Text } from "@sanity/ui";
 import DeletePane from "./components/DeletePane";
@@ -34,11 +35,15 @@ const PublishPane = (props: any) => {
       case "siteSettings":
         return "/";
       case "project":
+      case "projectsPage":
         return slug ? `/projects/${slug}` : "/projects";
       case "service":
+      case "servicesPage":
         return slug ? `/services/${slug}` : "/services";
       case "aboutPage":
         return "/about";
+      case "contactPage":
+        return "/contact";
       default:
         return "/";
     }
@@ -200,56 +205,39 @@ export const deskStructure = (S: StructureBuilder) =>
   S.list()
     .title("GTek Studio")
     .items([
+      singleton(S, {
+        id: "home-page",
+        documentId: "homePage",
+        schemaType: "homePage",
+        title: "Home",
+        icon: HomeIcon,
+      }),
+      singleton(S, {
+        id: "about-page",
+        documentId: "aboutPage",
+        schemaType: "aboutPage",
+        title: "About",
+        icon: UsersIcon,
+      }),
       S.listItem()
-        .title("Pages")
-        .icon(DocumentsIcon)
+        .id("services")
+        .title("Services")
+        .icon(BlockElementIcon)
         .child(
           S.list()
-            .title("Pages")
+            .title("Services")
             .items([
               singleton(S, {
-                id: "home-page",
-                documentId: "homePage",
-                schemaType: "homePage",
-                title: "Home",
-                icon: HomeIcon,
+                id: "services-page",
+                documentId: "servicesPage",
+                schemaType: "servicesPage",
+                title: "Page text & images",
+                icon: DocumentsIcon,
               }),
-              singleton(S, {
-                id: "about-page",
-                documentId: "aboutPage",
-                schemaType: "aboutPage",
-                title: "About",
-                icon: UsersIcon,
-              }),
-            ]),
-        ),
-
-      S.divider(),
-
-      S.listItem()
-        .title("Content library")
-        .icon(ComponentIcon)
-        .child(
-          S.list()
-            .title("Content library")
-            .items([
-              S.listItem()
-                .id("projects")
-                .title("Projects")
-                .icon(EarthGlobeIcon)
-                .schemaType("project")
-                .child(
-                  S.documentTypeList("project")
-                    .title("Projects")
-                    .defaultOrdering([{ field: "sector", direction: "asc" }, { field: "title", direction: "asc" }])
-                    .child((docId) =>
-                      S.document().schemaType("project").documentId(docId).views(collectionViews(S)),
-                    ),
-                ),
               S.listItem()
                 .id("service-groups")
                 .title("Service groups")
-                .icon(BlockElementIcon)
+                .icon(ComponentIcon)
                 .schemaType("service")
                 .child(
                   S.documentTypeList("service")
@@ -261,9 +249,44 @@ export const deskStructure = (S: StructureBuilder) =>
                 ),
             ]),
         ),
-
+      S.listItem()
+        .id("projects")
+        .title("Projects")
+        .icon(EarthGlobeIcon)
+        .child(
+          S.list()
+            .title("Projects")
+            .items([
+              singleton(S, {
+                id: "projects-page",
+                documentId: "projectsPage",
+                schemaType: "projectsPage",
+                title: "Page text & layout",
+                icon: DocumentsIcon,
+              }),
+              S.listItem()
+                .id("project-cards")
+                .title("Project cards")
+                .icon(EarthGlobeIcon)
+                .schemaType("project")
+                .child(
+                  S.documentTypeList("project")
+                    .title("Project cards")
+                    .defaultOrdering([{ field: "sector", direction: "asc" }, { field: "title", direction: "asc" }])
+                    .child((docId) =>
+                      S.document().schemaType("project").documentId(docId).views(collectionViews(S)),
+                    ),
+                ),
+            ]),
+        ),
+      singleton(S, {
+        id: "contact-page",
+        documentId: "contactPage",
+        schemaType: "contactPage",
+        title: "Contact",
+        icon: EnvelopeIcon,
+      }),
       S.divider(),
-
       singleton(S, {
         id: "site-settings",
         documentId: "siteSettings",

@@ -5,16 +5,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/theme/ThemeToggle";
+import { siteConfig } from "@/content/siteConfig";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const navItems = [
-    { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-    { href: "/services", label: "Services" },
-    { href: "/projects", label: "Projects" },
-  ];
+  const companyName = siteConfig.settings.companyName;
+  const navItems = siteConfig.settings.nav.filter((item) => item.href !== "/contact");
+  const contactItem = siteConfig.settings.nav.find((item) => item.href === "/contact") ?? {
+    href: "/contact",
+    label: "Contact",
+  };
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -39,7 +40,7 @@ export default function Navbar() {
         >
           <Image
             src="/images/gtek-logo.png"
-            alt="GTek Engineering"
+            alt={companyName}
             width={238}
             height={120}
             className="h-9 w-auto md:h-10"
@@ -61,10 +62,10 @@ export default function Navbar() {
             </Link>
           ))}
           <Link
-            href="/contact"
+            href={contactItem.href}
             className="ml-2 inline-flex items-center justify-center rounded-full bg-gtek-amber px-5 py-2 text-sm font-bold text-gtek-navy transition-colors hover:bg-yellow-400 active:bg-yellow-500 dark:hover:bg-yellow-300 dark:active:bg-yellow-200"
           >
-            Contact
+            {contactItem.label}
           </Link>
           <ThemeToggle />
         </nav>
@@ -87,7 +88,7 @@ export default function Navbar() {
       {isOpen ? (
         <div className="border-t border-slate-200 bg-white/95 backdrop-blur md:hidden dark:border-slate-800 dark:bg-slate-950/95">
           <nav id="mobile-nav" className="container mx-auto flex flex-col gap-2 px-4 py-4 text-sm font-semibold">
-            {[...navItems, { href: "/contact", label: "Contact" }].map((item) => (
+            {[...navItems, contactItem].map((item) => (
               <Link
                 key={item.href}
                 href={item.href}

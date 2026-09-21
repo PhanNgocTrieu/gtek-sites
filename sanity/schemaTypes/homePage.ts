@@ -1,10 +1,15 @@
 import { defineField, defineType } from "sanity";
+import siteConfig from "../../config.js";
+import { blankHint, imageHint } from "./hints";
+
+const defaults = siteConfig.homepage;
 
 export const homePage = defineType({
   name: "homePage",
   title: "Home Page",
   type: "document",
   groups: [
+    { name: "seo", title: "SEO" },
     { name: "hero", title: "Hero", default: true },
     { name: "services", title: "Services" },
     { name: "why", title: "Why GTek" },
@@ -13,11 +18,32 @@ export const homePage = defineType({
   ],
   fields: [
     defineField({
+      name: "seoTitle",
+      title: "SEO title",
+      type: "string",
+      group: "seo",
+      description: blankHint,
+      initialValue: defaults.seo.title,
+      validation: (Rule) => Rule.max(70),
+    }),
+    defineField({
+      name: "seoDescription",
+      title: "SEO description",
+      type: "text",
+      rows: 3,
+      group: "seo",
+      description: blankHint,
+      initialValue: defaults.seo.description,
+      validation: (Rule) => Rule.max(180),
+    }),
+    defineField({
       name: "heroHeadline",
       title: "Hero headline",
       type: "string",
       group: "hero",
-      validation: (Rule) => Rule.required().max(120),
+      description: blankHint,
+      initialValue: defaults.heroHeadline,
+      validation: (Rule) => Rule.max(120),
     }),
     defineField({
       name: "heroSubhead",
@@ -25,27 +51,61 @@ export const homePage = defineType({
       type: "text",
       rows: 3,
       group: "hero",
-      validation: (Rule) => Rule.required().max(300),
+      description: blankHint,
+      initialValue: defaults.heroSubhead,
+      validation: (Rule) => Rule.max(300),
     }),
     defineField({
       name: "heroBackground",
       title: "Hero background image",
       type: "image",
       group: "hero",
+      description: imageHint,
       options: { hotspot: true },
     }),
     defineField({
       name: "heroCtaLabel",
-      title: "Hero CTA label",
+      title: "Primary button label",
       type: "string",
       group: "hero",
-      validation: (Rule) => Rule.required().max(40),
+      description: blankHint,
+      initialValue: defaults.heroCtaLabel,
+      validation: (Rule) => Rule.max(40),
+    }),
+    defineField({
+      name: "heroCtaHref",
+      title: "Primary button link",
+      type: "string",
+      group: "hero",
+      description: blankHint,
+      initialValue: defaults.heroCtaHref,
+      validation: (Rule) => Rule.max(200),
+    }),
+    defineField({
+      name: "heroSecondaryCtaLabel",
+      title: "Secondary button label",
+      type: "string",
+      group: "hero",
+      description: blankHint,
+      initialValue: defaults.heroSecondaryCtaLabel,
+      validation: (Rule) => Rule.max(40),
+    }),
+    defineField({
+      name: "heroSecondaryCtaHref",
+      title: "Secondary button link",
+      type: "string",
+      group: "hero",
+      description: blankHint,
+      initialValue: defaults.heroSecondaryCtaHref,
+      validation: (Rule) => Rule.max(200),
     }),
     defineField({
       name: "servicesIntro",
       title: "Services intro",
       type: "string",
       group: "services",
+      description: blankHint,
+      initialValue: defaults.servicesIntro,
       validation: (Rule) => Rule.max(180),
     }),
     defineField({
@@ -53,6 +113,7 @@ export const homePage = defineType({
       title: "Service cards",
       type: "array",
       group: "services",
+      description: "Leave empty to show the default four service cards.",
       of: [
         {
           type: "object",
@@ -78,6 +139,11 @@ export const homePage = defineType({
           },
         },
       ],
+      initialValue: defaults.serviceCards.map((card) => ({
+        title: card.title,
+        description: card.description,
+        showImage: card.showImage,
+      })),
       validation: (Rule) => Rule.max(6),
     }),
     defineField({
@@ -85,6 +151,8 @@ export const homePage = defineType({
       title: "Why GTek intro",
       type: "string",
       group: "why",
+      description: blankHint,
+      initialValue: defaults.whyIntro,
       validation: (Rule) => Rule.max(200),
     }),
     defineField({
@@ -92,6 +160,7 @@ export const homePage = defineType({
       title: "Why GTek items",
       type: "array",
       group: "why",
+      description: "Leave empty to show the default items.",
       of: [
         {
           type: "object",
@@ -104,6 +173,7 @@ export const homePage = defineType({
           },
         },
       ],
+      initialValue: defaults.whyItems,
       validation: (Rule) => Rule.max(6),
     }),
     defineField({
@@ -111,6 +181,8 @@ export const homePage = defineType({
       title: "Closing CTA headline",
       type: "string",
       group: "closing",
+      description: blankHint,
+      initialValue: defaults.closingHeadline,
       validation: (Rule) => Rule.max(120),
     }),
     defineField({
@@ -118,6 +190,8 @@ export const homePage = defineType({
       title: "Closing CTA subhead",
       type: "string",
       group: "closing",
+      description: blankHint,
+      initialValue: defaults.closingSubhead,
       validation: (Rule) => Rule.max(200),
     }),
     defineField({
@@ -125,7 +199,18 @@ export const homePage = defineType({
       title: "Closing CTA label",
       type: "string",
       group: "closing",
+      description: blankHint,
+      initialValue: defaults.closingCtaLabel,
       validation: (Rule) => Rule.max(40),
+    }),
+    defineField({
+      name: "closingCtaHref",
+      title: "Closing CTA link",
+      type: "string",
+      group: "closing",
+      description: blankHint,
+      initialValue: defaults.closingCtaHref,
+      validation: (Rule) => Rule.max(200),
     }),
     defineField({
       name: "pageBackgroundType",
@@ -140,7 +225,7 @@ export const homePage = defineType({
         ],
         layout: "radio",
       },
-      initialValue: "none",
+      initialValue: defaults.pageBackgroundType,
     }),
     defineField({
       name: "pageBackgroundColor",

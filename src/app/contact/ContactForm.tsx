@@ -8,9 +8,23 @@ type SubmitState =
   | { status: "success"; message: string }
   | { status: "error"; message: string };
 
-const subjects = ["General Inquiry", "Project Inquiry", "Career", "Other"] as const;
+export type ContactFormCopy = {
+  subjects: string[];
+  fields: {
+    name: { label: string; required: boolean; placeholder: string };
+    company: { label: string; required: boolean; placeholder: string };
+    email: { label: string; required: boolean; placeholder: string };
+    subject: { label: string; required: boolean; placeholder: string };
+    message: { label: string; required: boolean; placeholder: string };
+  };
+  submitLabel: string;
+  successMessage: string;
+};
 
-export default function ContactForm() {
+const inputClass =
+  "mt-2 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gtek-amber/70 focus:ring-2 focus:ring-gtek-amber/60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300";
+
+export default function ContactForm({ copy }: { copy: ContactFormCopy }) {
   const [state, setState] = useState<SubmitState>({ status: "idle" });
 
   const canSubmit = useMemo(() => state.status !== "submitting", [state.status]);
@@ -34,7 +48,7 @@ export default function ContactForm() {
         return;
       }
 
-      setState({ status: "success", message: data.message ?? "Message sent. We’ll get back to you shortly." });
+      setState({ status: "success", message: data.message ?? copy.successMessage });
       form.reset();
     } catch {
       setState({ status: "error", message: "Network error. Please try again." });
@@ -43,7 +57,6 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      {/* Honeypot field (anti-spam). Humans should not fill this. */}
       <div className="hidden" aria-hidden="true">
         <label>
           Website
@@ -53,47 +66,48 @@ export default function ContactForm() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-          Name
+          {copy.fields.name.label}
           <input
             name="name"
-            required
-            className="mt-2 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gtek-amber/70 focus:ring-2 focus:ring-gtek-amber/60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
-            placeholder="Your name"
+            required={copy.fields.name.required}
+            className={inputClass}
+            placeholder={copy.fields.name.placeholder}
           />
         </label>
         <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-          Company
+          {copy.fields.company.label}
           <input
             name="company"
-            className="mt-2 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gtek-amber/70 focus:ring-2 focus:ring-gtek-amber/60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
-            placeholder="Company (optional)"
+            required={copy.fields.company.required}
+            className={inputClass}
+            placeholder={copy.fields.company.placeholder}
           />
         </label>
       </div>
 
       <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
-        Email
+        {copy.fields.email.label}
         <input
           name="email"
           type="email"
-          required
-          className="mt-2 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gtek-amber/70 focus:ring-2 focus:ring-gtek-amber/60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
-          placeholder="you@company.com"
+          required={copy.fields.email.required}
+          className={inputClass}
+          placeholder={copy.fields.email.placeholder}
         />
       </label>
 
       <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
-        Subject
+        {copy.fields.subject.label}
         <select
           name="subject"
-          required
+          required={copy.fields.subject.required}
           defaultValue=""
-          className="mt-2 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gtek-amber/70 focus:ring-2 focus:ring-gtek-amber/60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+          className={inputClass}
         >
           <option value="" disabled>
-            Select a subject…
+            {copy.fields.subject.placeholder}
           </option>
-          {subjects.map((s) => (
+          {copy.subjects.map((s) => (
             <option key={s} value={s}>
               {s}
             </option>
@@ -102,13 +116,13 @@ export default function ContactForm() {
       </label>
 
       <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
-        Message
+        {copy.fields.message.label}
         <textarea
           name="message"
-          required
+          required={copy.fields.message.required}
           rows={5}
-          className="mt-2 block w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gtek-amber/70 focus:ring-2 focus:ring-gtek-amber/60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
-          placeholder="Tell us about your project, timeline, and any site constraints."
+          className={`${inputClass} resize-y`}
+          placeholder={copy.fields.message.placeholder}
         />
       </label>
 
@@ -118,7 +132,7 @@ export default function ContactForm() {
           disabled={!canSubmit}
           className="inline-flex items-center justify-center rounded-full bg-gtek-amber px-6 py-3 text-base font-bold text-gtek-navy transition-colors hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {state.status === "submitting" ? "Sending..." : "Send Message"}
+          {state.status === "submitting" ? "Sending..." : copy.submitLabel}
         </button>
         {state.status === "success" ? (
           <p className="text-sm font-semibold text-emerald-700">{state.message}</p>
@@ -128,4 +142,3 @@ export default function ContactForm() {
     </form>
   );
 }
-

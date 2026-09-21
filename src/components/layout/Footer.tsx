@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { siteSettingsQuery } from "@/sanity/queries";
 import { sanityFetchPublished } from "@/sanity/fetch";
+import { coalesceImage, coalesceList, coalesceText, siteConfig } from "@/content/siteConfig";
 
 type FooterSettings = {
   companyName?: string;
@@ -13,28 +14,28 @@ type FooterSettings = {
   footerCopyright?: string;
 };
 
-const defaultTagline =
-  "Senior-led geotechnical consulting for dam safety, mining, foundations, and slope stability projects across Canada.";
-
-const defaultLicenses = ["M.Eng., P.Eng.", "Licensed in MB, SK, BC", "Canadian Geotechnical Society", "Canadian Dam Association"];
+const defaults = siteConfig.settings;
 
 export default async function Footer() {
   const settings = await sanityFetchPublished<FooterSettings>(siteSettingsQuery, {}, 120);
 
-  const companyName = settings?.companyName ?? "GTek Engineering Inc.";
-  const tagline = settings?.footerTagline ?? defaultTagline;
-  const phone = settings?.phone ?? "+1 204 792 8829";
-  const email = settings?.footerEmail ?? settings?.generalEmail ?? "wayne.wong@gtekeng.com";
-  const licenses = settings?.footerLicenses?.length ? settings.footerLicenses : defaultLicenses;
-  const copyright =
-    settings?.footerCopyright ?? `© ${new Date().getFullYear()} ${companyName} All rights reserved.`;
-  const logoSrc = settings?.footerLogo ?? "/images/gtek-logo.png";
+  const companyName = coalesceText(settings?.companyName, defaults.companyName);
+  const tagline = coalesceText(settings?.footerTagline, defaults.footer.footerTagline);
+  const phone = coalesceText(settings?.phone, defaults.phone);
+  const email = coalesceText(settings?.footerEmail, coalesceText(settings?.generalEmail, defaults.footer.footerEmail));
+  const licenses = coalesceList(settings?.footerLicenses, defaults.footer.footerLicenses);
+  const copyright = coalesceText(
+    settings?.footerCopyright,
+    defaults.footer.footerCopyright || `© ${new Date().getFullYear()} ${companyName} All rights reserved.`,
+  );
+  const logoSrc = coalesceImage(settings?.footerLogo, defaults.footer.footerLogo);
+  const remoteLogo = /^https?:\/\//i.test(logoSrc);
 
   return (
     <footer className="border-t border-slate-200 bg-slate-50 py-14 text-slate-600 transition-colors dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400">
       <div className="container mx-auto grid grid-cols-1 gap-10 px-4 md:grid-cols-3">
         <div>
-          {settings?.footerLogo ? (
+          {remoteLogo ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={logoSrc}
@@ -43,7 +44,7 @@ export default async function Footer() {
             />
           ) : (
             <Image
-              src="/images/gtek-logo.png"
+              src={logoSrc || "/images/gtek-logo.png"}
               alt={companyName}
               width={238}
               height={120}

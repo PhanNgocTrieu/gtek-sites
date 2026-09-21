@@ -5,6 +5,7 @@ import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import SiteFrame from "@/components/layout/SiteFrame";
 import Footer from "@/components/layout/Footer";
 import ThemeScript from "@/components/theme/ThemeScript";
+import { siteConfig } from "@/content/siteConfig";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -17,19 +18,17 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://gtekengineering.ca"),
+  metadataBase: new URL(siteConfig.settings.seo.canonical),
   title: {
-    default: "GTek Engineering Inc.",
-    template: "%s | GTek Engineering",
+    default: siteConfig.settings.seo.defaultTitle,
+    template: siteConfig.settings.seo.titleTemplate,
   },
-  description:
-    "GTek Engineering Inc. provides geotechnical consulting, dam safety support, and materials testing services in Winnipeg, Manitoba.",
+  description: siteConfig.settings.seo.description,
   openGraph: {
     type: "website",
-    siteName: "GTek Engineering Inc.",
-    title: "GTek Engineering Inc.",
-    description:
-      "Geotechnical consulting, dam safety support, and materials testing services in Winnipeg, Manitoba.",
+    siteName: siteConfig.settings.seo.siteName,
+    title: siteConfig.settings.seo.defaultTitle,
+    description: siteConfig.settings.seo.description,
   },
   alternates: {
     canonical: "/",

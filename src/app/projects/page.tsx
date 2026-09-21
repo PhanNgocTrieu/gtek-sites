@@ -1,71 +1,66 @@
 import Section from "@/components/ui/Section";
 import ProjectsClient, { type Project } from "@/app/projects/ProjectsClient";
 import SanityStudioFab from "@/components/layout/SanityStudioFab";
-import { projectsQuery, siteSettingsQuery } from "@/sanity/queries";
+import { projectsPageQuery, projectsQuery, siteSettingsQuery } from "@/sanity/queries";
 import type { Metadata } from "next";
+import { loadCms } from "@/content/loadCms";
+import {
+  coalesceImage,
+  coalesceList,
+  coalesceText,
+  pageSeo,
+  siteConfig,
+} from "@/content/siteConfig";
 
-export const metadata: Metadata = {
-  title: "Projects",
-  description:
-    "Explore GTek Engineering’s project experience across mining, dam safety, infrastructure, industrial, commercial, hydraulic, and public projects.",
+type ProjectsPageDoc = {
+  seoTitle?: string;
+  seoDescription?: string;
+  heroTitle?: string;
+  heroSubhead?: string;
+  heroBackground?: string;
+  displayMode?: "withImage" | "withoutImage";
+  filterCategories?: string[];
 };
 
-const mockProjects: Project[] = [
-  {
-    title: "Dam Safety Review (Representative)",
-    sector: "Dam Safety",
-    client: "Confidential hydroelectric utility",
-    location: "Manitoba, Canada",
-    scope:
-      "GTek personnel led a dam safety review including instrumentation data review, stability re-analysis under updated loading, and recommendations for ongoing monitoring.",
-    attribution: "Example shown to illustrate personnel capability; client naming subject to permission.",
-  },
-  {
-    title: "Tailings Facility Instrumentation & Performance Review",
-    sector: "Mining",
-    client: "Confidential mining client",
-    location: "Canada",
-    scope:
-      "Support for monitoring program interpretation, trend review, and practical recommendations aligned with operational constraints.",
-  },
-  {
-    title: "Foundation Recommendations for Building / Infrastructure",
-    sector: "Foundations",
-    client: "Commercial owner",
-    location: "Winnipeg, MB",
-    scope:
-      "Site investigation inputs and foundation options focusing on constructability, risk communication, and clear recommendations for design and construction.",
-  },
-  {
-    title: "Slope Stability Assessment & Mitigation Concept",
-    sector: "Slope Stability",
-    client: "Infrastructure owner",
-    location: "Canada",
-    scope:
-      "Stability screening and remediation concept development with monitoring considerations for natural and engineered slopes.",
-  },
-] as const;
+const defaults = siteConfig.projects;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await loadCms<ProjectsPageDoc>(projectsPageQuery);
+  return pageSeo(page, defaults.seo);
+}
 
 export default async function ProjectsPage() {
-  const { cookies } = await import("next/headers");
-  const cookieStore = cookies();
-  const preview = cookieStore.get("sanityPreview")?.value;
+  const [page, settings, sanityProjects] = await Promise.all([
+    loadCms<ProjectsPageDoc>(projectsPageQuery),
+    loadCms<{
+      projectsHeroBackground?: string;
+      projectsDisplayMode?: "withImage" | "withoutImage";
+    }>(siteSettingsQuery),
+    loadCms<Project[]>(projectsQuery),
+  ]);
 
-  const fetchModule = await import("@/sanity/fetch");
-  const settings = preview
-    ? await fetchModule.sanityFetchDraft<{
-        projectsHeroBackground?: string;
-        projectsDisplayMode?: "withImage" | "withoutImage";
-      }>(siteSettingsQuery, {}, 0)
-    : await fetchModule.sanityFetchPublished<{
-        projectsHeroBackground?: string;
-        projectsDisplayMode?: "withImage" | "withoutImage";
-      }>(siteSettingsQuery, {}, 60);
-  const sanityProjects = preview
-    ? await fetchModule.sanityFetchDraft<Project[]>(projectsQuery, {}, 0)
-    : await fetchModule.sanityFetchPublished<Project[]>(projectsQuery, {}, 60);
-  const projectsHeroBackground = settings?.projectsHeroBackground;
-  const projectsDisplayMode = settings?.projectsDisplayMode ?? "withImage";
+  const heroTitle = coalesceText(page?.heroTitle, defaults.heroTitle);
+  const heroSubhead = coalesceText(page?.heroSubhead, defaults.heroSubhead);
+  const projectsHeroBackground = coalesceImage(
+    page?.heroBackground,
+    coalesceImage(settings?.projectsHeroBackground, siteConfig.settings.backgrounds.projectsHeroBackground),
+  );
+  const displayModeValue = page?.displayMode || settings?.projectsDisplayMode || siteConfig.settings.projectsDisplayMode;
+  const projectsDisplayMode = displayModeValue === "withoutImage" ? "withoutImage" : "withImage";
+  const filterCategories = coalesceList(page?.filterCategories, defaults.filterCategories);
+  const projects = coalesceList(
+    sanityProjects,
+    defaults.items.map((item) => ({
+      title: item.title,
+      sector: item.sector as Project["sector"],
+      client: item.client,
+      location: item.location,
+      scope: item.scope,
+      attribution: item.attribution || undefined,
+      image: item.image || undefined,
+    })),
+  );
+
   return (
     <main>
       <Section className={`py-16 ${projectsHeroBackground ? "relative overflow-hidden" : "bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950"}`}>
@@ -76,18 +71,18 @@ export default async function ProjectsPage() {
           </>
         ) : null}
         <div className={`max-w-4xl ${projectsHeroBackground ? "relative" : ""}`}>
-          <h1 className="text-4xl font-extrabold tracking-tight text-gtek-navy dark:text-slate-200 md:text-5xl">Project Experience</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight text-gtek-navy dark:text-slate-200 md:text-5xl">{heroTitle}</h1>
           <p className="mt-5 text-lg text-slate-600 leading-relaxed dark:text-slate-400">
-            Representative examples that demonstrate capability through personnel experience—presented with clear role
-            attribution where projects were delivered at previous firms.
+            {heroSubhead}
           </p>
         </div>
       </Section>
 
       <Section className="bg-white py-14 dark:bg-slate-950">
         <ProjectsClient
-          initialProjects={sanityProjects?.length ? sanityProjects : [...mockProjects]}
+          initialProjects={projects}
           displayMode={projectsDisplayMode}
+          filterCategories={filterCategories}
         />
       </Section>
 

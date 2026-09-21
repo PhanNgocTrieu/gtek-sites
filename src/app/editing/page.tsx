@@ -75,20 +75,28 @@ export default function EditingGuidePage() {
               <h2 className="text-xl font-bold text-slate-900 dark:text-slate-200">2) Update services</h2>
               <ol className="mt-4 space-y-3 text-sm text-slate-700 list-decimal pl-5 dark:text-slate-400">
                 <li>Open <Link href="/studio" className="font-semibold text-gtek-navy hover:underline dark:text-slate-300">/studio</Link>.</li>
-                <li>Click <span className="font-semibold">Service Groups</span>.</li>
-                <li>Edit the list items and publish.</li>
+                <li>Click <span className="font-semibold">Services</span>.</li>
+                <li>
+                  Use <span className="font-semibold">Page text & images</span> for the hero copy, then{" "}
+                  <span className="font-semibold">Service groups</span> to edit each group’s list.
+                </li>
+                <li>Click <span className="font-semibold">Publish</span>.</li>
               </ol>
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-200">3) Update Home / About / Contact details</h2>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-200">3) Update Home / About / Contact</h2>
               <ol className="mt-4 space-y-3 text-sm text-slate-700 list-decimal pl-5 dark:text-slate-400">
                 <li>
-                  In Studio, use the top menu items: <span className="font-semibold">Home Page</span>,{" "}
-                  <span className="font-semibold">About Page</span>, and <span className="font-semibold">Site Settings</span>.
+                  In Studio, each website page has its own menu item: <span className="font-semibold">Home</span>,{" "}
+                  <span className="font-semibold">About</span>, <span className="font-semibold">Services</span>,{" "}
+                  <span className="font-semibold">Projects</span>, and <span className="font-semibold">Contact</span>.
                 </li>
                 <li>
-                  Update text fields (headline, value props, team bios, address/email/phone) and click{" "}
+                  Company-wide footer, phone, and form email live under <span className="font-semibold">Site settings</span>.
+                </li>
+                <li>
+                  Leave a field blank to keep the default website text. Anything you type replaces that default after{" "}
                   <span className="font-semibold">Publish</span>.
                 </li>
                 <li>Refresh the website to see changes.</li>

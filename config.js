@@ -17,7 +17,7 @@ const config = {
     themeColors: {
       primary: "#005EA4",
       secondary: "#0F4761",
-      accent: "#295818",
+      accent: "#FFB400",
     },
     nav: [
       { href: "/", label: "Home" },
@@ -81,20 +81,6 @@ const config = {
       "Clear scope, senior-led delivery, and practical recommendations you can build with.",
     serviceCards: [
       {
-        title: "Dam Safety",
-        description:
-          "Inspection, instrumentation, and risk assessment for new and existing dams in accordance with CDA guidelines.",
-        image: "",
-        showImage: false,
-      },
-      {
-        title: "Mining",
-        description:
-          "Geotechnical support for tailings facilities, open-pit slope design, and mine waste management.",
-        image: "",
-        showImage: false,
-      },
-      {
         title: "Foundations",
         description:
           "Site investigation, foundation design, and construction-phase geotechnical engineering for buildings and infrastructure.",
@@ -108,6 +94,20 @@ const config = {
         image: "",
         showImage: false,
       },
+      {
+        title: "Mining",
+        description:
+          "Geotechnical support for tailings facilities, open-pit slope design, and mine waste management.",
+        image: "",
+        showImage: false,
+      },
+      {
+        title: "Dam Safety",
+        description:
+          "Inspection, instrumentation, and risk assessment for new and existing dams in accordance with CDA guidelines.",
+        image: "",
+        showImage: false,
+      },
     ],
     whyIntro: "",
     whyItems: [
@@ -117,11 +117,15 @@ const config = {
       },
       {
         title: "Direct access, fast response.",
-        body: "As a small firm, GTek operates without the layers that slow larger consultancies. Clients deal with decision-makers from day one.",
+        body: ": GTek operates without the organizational layers that slow larger consultancies. Clients work directly with decision-makers from day one and receive timely answers throughout the project.",
       },
       {
         title: "Specialized technical depth.",
         body: "Our team brings combined expertise in dam engineering, mining geotechnics, and academic research, focused on the projects we choose to take on.",
+      },
+      {
+        title: "Honest",
+        body: "Clients are kept fully informed of potential risks in design, construction, and structural performance — including alternative approaches and their respective trade-offs.",
       },
     ],
     closingHeadline: "Have a project? Let’s talk.",
@@ -215,7 +219,7 @@ const config = {
     groups: [
       {
         title: "Geotechnical Engineering",
-        image: "/images/services/GE_image",
+        image: "/images/services/GE_image.jpg",
         items: [
           { title: "Site investigation and soil/rock characterization", description: "" },
           { title: "Slope stability analysis and stabilization design", description: "" },
@@ -230,7 +234,7 @@ const config = {
       },
       {
         title: "Dam Safety",
-        image: "/images/services/DS_image",
+        image: "/images/services/DS_image.jpg",
         items: [
           { title: "Dam safety inspections (regular, intermediate, and comprehensive) per CDA guidelines", description: "" },
           { title: "Dam safety reviews (DSR) and dam safety management plans (DSMP)", description: "" },
@@ -245,7 +249,7 @@ const config = {
       },
       {
         title: "Mining",
-        image: "/images/services/M_image",
+        image: "/images/services/M_image.jpg",
         items: [
           { title: "Tailings storage facility (TSF) design, staged raises, and closure planning", description: "" },
           { title: "Tailings dam safety reviews and GISTM conformance assessments", description: "" },

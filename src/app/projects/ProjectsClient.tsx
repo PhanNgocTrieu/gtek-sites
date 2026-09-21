@@ -22,7 +22,7 @@ export type Project = {
   legacyCategory?: string;
 };
 
-const categories: Array<"All" | ProjectCategory> = [
+const defaultCategories: Array<"All" | ProjectCategory> = [
   "All",
   "Dam Safety",
   "Mining",
@@ -58,10 +58,15 @@ export type ProjectsDisplayMode = "withImage" | "withoutImage";
 export default function ProjectsClient({
   initialProjects,
   displayMode = "withImage",
+  filterCategories,
 }: {
   initialProjects: Project[];
   displayMode?: ProjectsDisplayMode;
+  filterCategories?: string[];
 }) {
+  const categories = (filterCategories?.length ? filterCategories : defaultCategories) as Array<
+    "All" | ProjectCategory
+  >;
   const [active, setActive] = useState<(typeof categories)[number]>("All");
 
   const filtered = useMemo(() => {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getSanityClient } from "@/sanity/client";
+import { coalesceText, siteConfig } from "@/content/siteConfig";
 
 function isNonEmptyString(v: unknown): v is string {
   return typeof v === "string" && v.trim().length > 0;
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
 
   const apiKey = process.env.RESEND_API_KEY;
   const envToEmail = process.env.CONTACT_TO_EMAIL?.trim();
-  let toEmail = envToEmail || "wayne.wong@gtekeng.com";
+  let toEmail = envToEmail || siteConfig.settings.contact.contactEmail;
   const fromEmail = process.env.CONTACT_FROM_EMAIL?.trim() || "GTek Website <onboarding@resend.dev>";
   const ackFromEmail = process.env.CONTACT_ACK_FROM_EMAIL?.trim() || fromEmail;
   const sendAck = (process.env.CONTACT_SEND_ACK ?? "").trim().toLowerCase() === "true";
@@ -69,7 +70,7 @@ export async function POST(req: Request) {
       if (client) {
         const siteSettings = await client.fetch(`*[_type=="siteSettings" && _id=="siteSettings"][0]{ contactEmail }`);
         if (siteSettings?.contactEmail) {
-          toEmail = siteSettings.contactEmail;
+          toEmail = coalesceText(siteSettings.contactEmail, toEmail);
         }
       }
     } catch {

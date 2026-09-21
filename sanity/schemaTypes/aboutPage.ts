@@ -1,10 +1,15 @@
 import { defineField, defineType } from "sanity";
+import siteConfig from "../../config.js";
+import { blankHint, imageHint } from "./hints";
+
+const defaults = siteConfig.about;
 
 export const aboutPage = defineType({
   name: "aboutPage",
   title: "About Page",
   type: "document",
   groups: [
+    { name: "seo", title: "SEO" },
     { name: "hero", title: "Hero", default: true },
     { name: "narrative", title: "Company story" },
     { name: "team", title: "Team" },
@@ -26,9 +31,37 @@ export const aboutPage = defineType({
   },
   fields: [
     defineField({
+      name: "seoTitle",
+      title: "SEO title",
+      type: "string",
+      group: "seo",
+      description: blankHint,
+      initialValue: defaults.seo.title,
+      validation: (Rule) => Rule.max(70),
+    }),
+    defineField({
+      name: "seoDescription",
+      title: "SEO description",
+      type: "text",
+      rows: 3,
+      group: "seo",
+      description: blankHint,
+      initialValue: defaults.seo.description,
+      validation: (Rule) => Rule.max(180),
+    }),
+    defineField({
+      name: "heroTitle",
+      title: "Hero title",
+      type: "string",
+      group: "hero",
+      description: blankHint,
+      initialValue: defaults.heroTitle,
+      validation: (Rule) => Rule.max(80),
+    }),
+    defineField({
       name: "heroBackgroundImage",
       title: "Hero background image",
-      description: "Background image behind the About intro section.",
+      description: imageHint,
       type: "image",
       group: "hero",
       options: { hotspot: true },
@@ -50,8 +83,9 @@ export const aboutPage = defineType({
           },
         },
       ],
+      initialValue: defaults.narrativeItems,
       validation: (Rule) => Rule.max(12),
-      description: "Blocks like 'Who we are' with a subtitle. Add as many sections as needed.",
+      description: "Blocks like 'Who we are' with a subtitle. Leave empty to use the default story.",
     }),
     defineField({
       name: "narrative",
@@ -67,10 +101,21 @@ export const aboutPage = defineType({
       },
     }),
     defineField({
+      name: "teamIntro",
+      title: "Team intro",
+      type: "text",
+      rows: 2,
+      group: "team",
+      description: blankHint,
+      initialValue: defaults.teamIntro,
+      validation: (Rule) => Rule.max(240),
+    }),
+    defineField({
       name: "teamMembers",
       title: "Team members",
       type: "array",
       group: "team",
+      description: "Leave empty to show the default team.",
       of: [
         {
           type: "object",
@@ -105,6 +150,13 @@ export const aboutPage = defineType({
           },
         },
       ],
+      initialValue: defaults.teamMembers.map((member) => ({
+        name: member.name,
+        title: member.title,
+        credentials: member.credentials,
+        bio: member.bio,
+        showPhoto: member.showPhoto,
+      })),
       validation: (Rule) => Rule.max(12),
     }),
     defineField({
@@ -113,6 +165,7 @@ export const aboutPage = defineType({
       type: "array",
       of: [{ type: "string" }],
       group: "affiliations",
+      initialValue: defaults.affiliations,
       validation: (Rule) => Rule.max(12),
     }),
   ],
