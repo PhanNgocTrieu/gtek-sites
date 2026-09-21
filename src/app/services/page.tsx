@@ -3,6 +3,16 @@ import Card from "@/components/ui/Card";
 import Section from "@/components/ui/Section";
 import { serviceGroupsQuery, siteSettingsQuery } from "@/sanity/queries";
 import type { Metadata } from "next";
+import Image from "next/image";
+
+function toNextImageSrc(src: string | undefined, fallback: string) {
+  const raw = (src ?? "").trim() || fallback;
+  if (/^https?:\/\//i.test(raw) || raw.startsWith("data:") || raw.startsWith("blob:")) {
+    return raw;
+  }
+  const withoutPublic = raw.replace(/^\/?public\//, "/");
+  return withoutPublic.startsWith("/") ? withoutPublic : `/${withoutPublic}`;
+}
 
 export const metadata: Metadata = {
   title: "Services",
@@ -10,8 +20,11 @@ export const metadata: Metadata = {
     "Geotechnical engineering, dam safety & instrumentation support, construction support, and materials testing services in Winnipeg, Manitoba.",
 };
 
-const serviceImagesMapping = [
-  "", "", "", ""
+
+var serviceImagesMapping = [
+  "/images/servies/GE_image.jpg", 
+  "/images/servies/DM_image.jpg",
+  "/images/servies/M_image.jpg"
 ]
 
 const serviceGroups = [
@@ -19,55 +32,48 @@ const serviceGroups = [
     title: "Geotechnical Engineering",
     image: serviceImagesMapping[0],
     items: [
-      "Geotechnical investigations & reporting",
-      "Subsurface exploration planning",
-      "Soil and rock characterization",
-      "Foundation recommendations (shallow & deep)",
-      "Excavation support and shoring guidance",
-      "Slope stability assessments",
-      "Embankment and earthworks design support",
-      "Pavement subgrade evaluation",
-      "Ground improvement recommendations",
-      "Seismic site considerations (where applicable)",
-      "Construction-phase geotechnical review",
-      "Peer review / third-party review support",
+      "Site investigation and soil/rock characterization",
+      "Slope stability analysis and stabilization design",
+      "Foundation assessment & design (Shallow: footings & mat; Deep: piles)",
+      "Foundation load testing",
+      "Excavation and retaining walls (incl. shoring) assessments & design",
+      "Dam, dyke, and embankment design & rehabilitation",
+      "Flood and erosion protection assessment & design",
+      "Asphalt pavement, concrete slab and gravel surfaced roadway structure design",
+      "Instrumentation monitoring system (i.e. piezometer, inclinometer, ShapeArray, InSAR, thermistor, strain gauge, weir & etc)",
     ],
   },
   {
-    title: "Dam Safety, Instrumentation & Management",
+    title: "Dam Safety",
     image: serviceImagesMapping[1],
     items: [
-      "Dam safety reviews and assessments",
-      "Instrumentation selection and layout",
-      "Piezometer and monitoring program support",
-      "Data interpretation and performance trending",
-      "Risk-informed recommendations and reporting",
-      "Emergency preparedness support (EPP inputs)",
-      "Operations, maintenance, and surveillance inputs",
-      "Inspection support and field oversight",
-      "Regulatory documentation support",
+      "Dam safety inspections (regular, intermediate, and comprehensive) per CDA guidelines",
+      "Dam safety reviews (DSR) and dam safety management plans (DSMP)",
+      "Risk assessments and consequence classification",
+      "Failure modes and effects analysis (FMEA)",
+      "Emergency preparedness and response planning (EPP)",
+      "Seepage, stability, and deformation analysis of existing dams and dykes",
+      "Rehabilitation and remediation design for aging structures",
+      "Construction monitoring and quality assurance for dam works",
+      "Regulatory liaison and dam safety compliance support",
     ],
   },
   {
-    title: "Project Administration & Construction Support",
+    title: "Mining",
     image: serviceImagesMapping[2],
     items: [
-      "Field coordination and schedule alignment",
-      "Contractor / stakeholder coordination",
-      "RFI and technical clarification support",
-      "Construction documentation and reporting",
+      "Tailings storage facility (TSF) design, staged raises, and closure planning",
+      "Tailings dam safety reviews and GISTM conformance assessments",
+      "Open-pit slope design, kinematic analysis, and slope monitoring",
+      "Waste rock and overburden dump design and stability analysis",
+      "Heap leach pad design and liner system evaluation",
+      "Mine water management, seepage analysis, and pond design",
+      "Geotechnical site investigation for mine infrastructure (haul roads, plant sites, ROM pads)",
+      "Foundation design for crushers, conveyors, and process facilities",
+      "Independent technical review (ITR) and engineer of record (EOR) services for mining clients",
+      "Mine closure, reclamation, and long-term landform stability design"
     ],
-  },
-  {
-    title: "Material Testing",
-    image: serviceImagesMapping[3],
-    items: [
-      "Compaction testing and verification",
-      "Concrete testing (as required)",
-      "Aggregate sampling and testing support",
-      "QA/QC documentation for compliance",
-    ],
-  },
+  }
 ] as const;
 
 export default async function ServicesPage() {
