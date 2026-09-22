@@ -29,10 +29,49 @@ function isLikelyEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
-function resendErrorDetail(error: unknown): string {
-  if (!error || typeof error !== "object") return String(error ?? "");
-  const e = error as { message?: unknown };
-  return typeof e.message === "string" ? e.message : JSON.stringify(error);
+/** Trim, unquote, and drop an inline `# comment`. Does not remove spaces inside the value. */
+function readEnv(name: string): string {
+  const raw = process.env[name];
+  if (typeof raw !== "string") return "";
+  let value = raw.trim().replace(/^\uFEFF/, "");
+  if (
+    (value.startsWith('"') && value.endsWith('"')) ||
+    (value.startsWith("'") && value.endsWith("'"))
+  ) {
+    value = value.slice(1, -1).trim();
+  }
+  const commentAt = value.search(/\s+#/);
+  if (commentAt !== -1) value = value.slice(0, commentAt).trim();
+  return value;
+}
+
+/**
+ * Resend rejects the whole token if quotes, a `Bearer ` prefix, or
+ * `RESEND_API_KEY=` were stored as part of the value. Whitespace alone is
+ * not a valid character in a Resend key.
+ */
+function readResendApiKey(): string {
+  let key = readEnv("RESEND_API_KEY");
+  key = key.replace(/^RESEND_API_KEY=/i, "").trim();
+  if (
+    (key.startsWith('"') && key.endsWith('"')) ||
+    (key.startsWith("'") && key.endsWith("'"))
+  ) {
+    key = key.slice(1, -1).trim();
+  }
+  key = key.replace(/^Bearer\s+/i, "");
+  return key.replace(/\s+/g, "");
+}
+
+function resendErrorParts(error: unknown): { detail: string; name: string; statusCode: number | null } {
+  if (!error || typeof error !== "object") {
+    return { detail: String(error ?? ""), name: "", statusCode: null };
+  }
+  const e = error as { message?: unknown; name?: unknown; statusCode?: unknown };
+  const detail = typeof e.message === "string" ? e.message : JSON.stringify(error);
+  const name = typeof e.name === "string" ? e.name : "";
+  const statusCode = typeof e.statusCode === "number" ? e.statusCode : null;
+  return { detail, name, statusCode };
 }
 
 export async function POST(req: Request) {
@@ -69,11 +108,11 @@ export async function POST(req: Request) {
   const safeMessage = clamp(message.trim(), 5000);
   const safeSubject = clamp(subject.trim(), 80);
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const envToEmail = process.env.CONTACT_TO_EMAIL?.trim();
+  const apiKey = readResendApiKey();
+  const envToEmail = readEnv("CONTACT_TO_EMAIL");
   let toEmail = envToEmail || siteConfig.settings.contact.contactEmail;
   const fromEmail = normalizeResendFrom(
-    process.env.CONTACT_FROM_EMAIL?.trim() || "GTek Website <noreply@gtekeng.com>",
+    readEnv("CONTACT_FROM_EMAIL") || "GTek Website <noreply@gtekeng.com>",
   );
   // const ackFromEmail = process.env.CONTACT_ACK_FROM_EMAIL?.trim() || fromEmail;
   // const sendAck = (process.env.CONTACT_SEND_ACK ?? "").trim().toLowerCase() === "true";
@@ -153,9 +192,15 @@ export async function POST(req: Request) {
     });
 
     if (inquiry.error) {
-      const detail = resendErrorDetail(inquiry.error);
-      console.error("Resend inquiry send failed:", inquiry.error);
-      return NextResponse.json({ message: resendUserMessage(detail) }, { status: 502 });
+      const parsed = resendErrorParts(inquiry.error);
+      console.error("Resend inquiry send failed:", {
+        name: parsed.name,
+        statusCode: parsed.statusCode,
+        message: parsed.detail,
+        resendKeyLength: apiKey.length,
+        resendKeyHasRePrefix: apiKey.startsWith("re_"),
+      });
+      return NextResponse.json({ message: resendUserMessage(parsed.detail, parsed.name) }, { status: 502 });
     }
 
     // if (sendAck && (!testSender || safeEmail.toLowerCase() === toEmail.toLowerCase())) {
@@ -179,14 +224,27 @@ export async function POST(req: Request) {
     
   } catch (err) {
     console.error("Contact send threw:", err);
-    const detail = err instanceof Error ? err.message : resendErrorDetail(err);
-    return NextResponse.json({ message: resendUserMessage(detail) }, { status: 502 });
+    const parsed = err instanceof Error
+      ? { detail: err.message, name: err.name }
+      : resendErrorParts(err);
+    return NextResponse.json({ message: resendUserMessage(parsed.detail, parsed.name) }, { status: 502 });
   }
 
   return NextResponse.json({ message: "Thanks — your message was sent." }, { status: 200 });
 }
 
-function resendUserMessage(detail: string) {
+function isInvalidResendKeyError(detail: string, name: string) {
+  if (name === "missing_api_key" || name === "invalid_api_key" || name === "suspended_api_key") return true;
+  if (name === "restricted_api_key" && /not active|suspended/i.test(detail)) return true;
+  return (
+    /^api key is invalid\b/i.test(detail) ||
+    /missing api key/i.test(detail) ||
+    /api key is not active/i.test(detail) ||
+    /api key is suspended/i.test(detail)
+  );
+}
+
+function resendUserMessage(detail: string, name = "") {
   const d = detail.trim();
   if (/domain is not verified|not verified for this account/i.test(d)) {
     return "Email could not be sent: the From address must use a Resend-verified domain (or onboarding@resend.dev for tests).";
@@ -200,8 +258,11 @@ function resendUserMessage(detail: string) {
   if (/invalid.*\bto\b|to field/i.test(d)) {
     return "Email could not be sent: check CONTACT_TO_EMAIL on the server (must be a valid inbox address).";
   }
-  if (/api key|unauthorized|invalid token/i.test(d)) {
+  if (isInvalidResendKeyError(d, name)) {
     return "Email could not be sent: RESEND_API_KEY is missing or invalid on the server.";
+  }
+  if (/restricted to only send emails/i.test(d)) {
+    return "Email could not be sent: this Resend key is send-only and cannot call that API. Sending contact mail does not need Full access. Create a Sending access key and set RESEND_API_KEY to it.";
   }
   if (d.length > 0 && d.length <= 280 && !/stack|internal server/i.test(d)) {
     return `Email could not be sent: ${d}`;
