@@ -58,7 +58,7 @@ export async function POST(req: Request) {
   const apiKey = process.env.RESEND_API_KEY;
   const envToEmail = process.env.CONTACT_TO_EMAIL?.trim();
   let toEmail = envToEmail || siteConfig.settings.contact.contactEmail;
-  const fromEmail = process.env.CONTACT_FROM_EMAIL?.trim() || "GTek Website <onboarding@resend.dev>";
+  const fromEmail = process.env.CONTACT_FROM_EMAIL?.trim() || "wayne.wong@gtekeng.com";
   const ackFromEmail = process.env.CONTACT_ACK_FROM_EMAIL?.trim() || fromEmail;
   const sendAck = (process.env.CONTACT_SEND_ACK ?? "").trim().toLowerCase() === "true";
   const testSender = usesResendTestSender(fromEmail);
@@ -129,24 +129,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: resendUserMessage(detail) }, { status: 502 });
     }
 
-    if (sendAck && (!testSender || safeEmail.toLowerCase() === toEmail.toLowerCase())) {
-      const ack = await resend.emails.send({
-        from: ackFromEmail,
-        to: [safeEmail],
-        subject: "We received your message — GTek Engineering",
-        text: [
-          `Hi ${safeName},`,
-          "",
-          "Thanks for reaching out to GTek Engineering. We’ve received your message and will get back to you as soon as possible.",
-          "",
-          "— GTek Engineering",
-        ].join("\n"),
-      });
+    // if (sendAck && (!testSender || safeEmail.toLowerCase() === toEmail.toLowerCase())) {
+    //   const ack = await resend.emails.send({
+    //     from: ackFromEmail,
+    //     to: [safeEmail],
+    //     subject: "We received your message — GTek Engineering",
+    //     text: [
+    //       `Hi ${safeName},`,
+    //       "",
+    //       "Thanks for reaching out to GTek Engineering. We’ve received your message and will get back to you as soon as possible.",
+    //       "",
+    //       "— GTek Engineering",
+    //     ].join("\n"),
+    //   });
 
-      if (ack.error) {
-        console.error("Resend acknowledgement send failed:", ack.error);
-      }
-    }
+    //   if (ack.error) {
+    //     console.error("Resend acknowledgement send failed:", ack.error);
+    //   }
+    // }
+    
   } catch (err) {
     console.error("Contact send threw:", err);
     const detail = err instanceof Error ? err.message : resendErrorDetail(err);
