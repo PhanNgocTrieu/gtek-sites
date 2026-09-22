@@ -15,6 +15,20 @@ function usesResendTestSender(from: string) {
   return /@resend\.dev/i.test(from);
 }
 
+/** Resend accepts `Name <user@domain.com>` or bare `user@domain.com`. */
+function normalizeResendFrom(from: string) {
+  const trimmed = from.trim();
+  if (!trimmed) return trimmed;
+  if (/<[^>]+@[^>]+>/.test(trimmed)) return trimmed;
+  const emailOnly = trimmed.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+  if (emailOnly) return `GTek Website <${emailOnly[0]}>`;
+  return trimmed;
+}
+
+function isLikelyEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
 function resendErrorDetail(error: unknown): string {
   if (!error || typeof error !== "object") return String(error ?? "");
   const e = error as { message?: unknown };
@@ -58,7 +72,9 @@ export async function POST(req: Request) {
   const apiKey = process.env.RESEND_API_KEY;
   const envToEmail = process.env.CONTACT_TO_EMAIL?.trim();
   let toEmail = envToEmail || siteConfig.settings.contact.contactEmail;
-  const fromEmail = process.env.CONTACT_FROM_EMAIL?.trim() || "wayne.wong@gtekeng.com";
+  const fromEmail = normalizeResendFrom(
+    process.env.CONTACT_FROM_EMAIL?.trim() || "GTek Website <noreply@gtekeng.com>",
+  );
   // const ackFromEmail = process.env.CONTACT_ACK_FROM_EMAIL?.trim() || fromEmail;
   // const sendAck = (process.env.CONTACT_SEND_ACK ?? "").trim().toLowerCase() === "true";
   const testSender = usesResendTestSender(fromEmail);
@@ -78,7 +94,20 @@ export async function POST(req: Request) {
     }
   }
 
+  toEmail = toEmail.trim();
+
   console.log("Sending contact inquiry replyTo:", safeEmail, "to:", toEmail, "from:", fromEmail, "subject:", safeSubject);
+
+  if (!isLikelyEmail(toEmail)) {
+    console.error("Invalid CONTACT_TO_EMAIL / Sanity contactEmail:", toEmail);
+    return NextResponse.json(
+      {
+        message:
+          "Email service is misconfigured (invalid recipient). Please contact us at wayne.wong@gtekeng.com directly.",
+      },
+      { status: 500 },
+    );
+  }
 
   if (!apiKey) {
     return NextResponse.json(
@@ -158,11 +187,24 @@ export async function POST(req: Request) {
 }
 
 function resendUserMessage(detail: string) {
-  if (/domain is not verified/i.test(detail)) {
+  const d = detail.trim();
+  if (/domain is not verified|not verified for this account/i.test(d)) {
     return "Email could not be sent: the From address must use a Resend-verified domain (or onboarding@resend.dev for tests).";
   }
-  if (/only send testing emails|own email address/i.test(detail)) {
+  if (/only send testing emails|own email address/i.test(d)) {
     return "Email could not be sent: the Resend test sender can only deliver to the email on your Resend account. Verify gtekeng.com at resend.com/domains, then set CONTACT_FROM_EMAIL to an address on that domain (e.g. noreply@gtekeng.com).";
+  }
+  if (/invalid.*\bfrom\b|from field/i.test(d)) {
+    return "Email could not be sent: check CONTACT_FROM_EMAIL on the server (use GTek Website <noreply@gtekeng.com> on a verified domain).";
+  }
+  if (/invalid.*\bto\b|to field/i.test(d)) {
+    return "Email could not be sent: check CONTACT_TO_EMAIL on the server (must be a valid inbox address).";
+  }
+  if (/api key|unauthorized|invalid token/i.test(d)) {
+    return "Email could not be sent: RESEND_API_KEY is missing or invalid on the server.";
+  }
+  if (d.length > 0 && d.length <= 280 && !/stack|internal server/i.test(d)) {
+    return `Email could not be sent: ${d}`;
   }
   return "Failed to send message. Please try again later.";
 }

@@ -185,9 +185,11 @@ Full Docker reference, including the production-like image and troubleshooting: 
 | `STUDIO_BASIC_AUTH_USER` / `_PASS` | No | Adds Basic Auth in front of `/studio`; no-op when unset |
 | `RESEND_API_KEY` | For email | Sends contact-form messages |
 | `CONTACT_TO_EMAIL` | For email | Inbox that receives submissions |
-| `CONTACT_FROM_EMAIL` | For email | Verified sender address |
+| `CONTACT_FROM_EMAIL` | For email | Verified sender on your Resend domain, e.g. `GTek Website <noreply@gtekeng.com>` (not `@resend.dev` in production) |
 | `CONTACT_ACK_FROM_EMAIL` | No | Sender for the acknowledgement email |
 | `CONTACT_SEND_ACK` | No | `true` to auto-acknowledge submitters |
+
+On **Vercel** (or any host), set the same `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, and `CONTACT_FROM_EMAIL` as in `.env.local`, then redeploy. A `502` on `POST /api/contact` means Resend rejected the send — open the request **Response** body in DevTools for the `message` field, or check Vercel function logs for `Resend inquiry send failed`.
 | `NEXT_PUBLIC_GA_ID` | No | Google Analytics measurement ID |
 
 ## npm scripts
