@@ -59,8 +59,8 @@ export async function POST(req: Request) {
   const envToEmail = process.env.CONTACT_TO_EMAIL?.trim();
   let toEmail = envToEmail || siteConfig.settings.contact.contactEmail;
   const fromEmail = process.env.CONTACT_FROM_EMAIL?.trim() || "wayne.wong@gtekeng.com";
-  const ackFromEmail = process.env.CONTACT_ACK_FROM_EMAIL?.trim() || fromEmail;
-  const sendAck = (process.env.CONTACT_SEND_ACK ?? "").trim().toLowerCase() === "true";
+  // const ackFromEmail = process.env.CONTACT_ACK_FROM_EMAIL?.trim() || fromEmail;
+  // const sendAck = (process.env.CONTACT_SEND_ACK ?? "").trim().toLowerCase() === "true";
   const testSender = usesResendTestSender(fromEmail);
 
   // CMS contactEmail (@gtekeng.com) only works after gtekeng.com is verified on Resend.
