@@ -109,6 +109,7 @@ export const contactPageQuery = groq`*[_type == "contactPage" && _id == "contact
   formFields,
   submitLabel,
   successMessage,
+  contactToEmail,
   detailsTitle,
   companyName,
   tagline,

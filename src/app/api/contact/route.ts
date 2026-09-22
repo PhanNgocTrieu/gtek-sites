@@ -11,10 +11,6 @@ function clamp(s: string, max: number) {
   return s.length > max ? s.slice(0, max) : s;
 }
 
-function usesResendTestSender(from: string) {
-  return /@resend\.dev/i.test(from);
-}
-
 /** Resend accepts `Name <user@domain.com>` or bare `user@domain.com`. */
 function normalizeResendFrom(from: string) {
   const trimmed = from.trim();
@@ -110,27 +106,35 @@ export async function POST(req: Request) {
 
   const apiKey = readResendApiKey();
   const envToEmail = readEnv("CONTACT_TO_EMAIL");
-  let toEmail = envToEmail || siteConfig.settings.contact.contactEmail;
+  const defaultToEmail = siteConfig.settings.contact.contactEmail;
+  let toEmail = envToEmail || defaultToEmail;
   const fromEmail = normalizeResendFrom(
     readEnv("CONTACT_FROM_EMAIL") || "GTek Website <noreply@gtekeng.com>",
   );
   // const ackFromEmail = process.env.CONTACT_ACK_FROM_EMAIL?.trim() || fromEmail;
   // const sendAck = (process.env.CONTACT_SEND_ACK ?? "").trim().toLowerCase() === "true";
-  const testSender = usesResendTestSender(fromEmail);
 
-  // CMS contactEmail (@gtekeng.com) only works after gtekeng.com is verified on Resend.
-  if (!testSender) {
-    try {
-      const client = getSanityClient({ useCdn: true });
-      if (client) {
-        const siteSettings = await client.fetch(`*[_type=="siteSettings" && _id=="siteSettings"][0]{ contactEmail }`);
-        if (siteSettings?.contactEmail) {
-          toEmail = coalesceText(siteSettings.contactEmail, toEmail);
-        }
-      }
-    } catch {
-      // ignore and fallback to env/default
+  // Prefer Sanity so editors can change the inbox (and test on production) without a redeploy.
+  // Contact page → Form recipient, then Site settings fallback, then CONTACT_TO_EMAIL / config.js.
+  try {
+    const client = getSanityClient({ useCdn: false });
+    if (client) {
+      const cms = await client.fetch<{
+        contactToEmail?: string | null;
+        contactEmail?: string | null;
+      }>(
+        `{
+          "contactToEmail": *[_type=="contactPage" && _id=="contactPage"][0].contactToEmail,
+          "contactEmail": *[_type=="siteSettings" && _id=="siteSettings"][0].contactEmail
+        }`,
+      );
+      toEmail = coalesceText(
+        cms?.contactToEmail,
+        coalesceText(cms?.contactEmail, toEmail),
+      );
     }
+  } catch {
+    // ignore and fallback to env/default
   }
 
   toEmail = toEmail.trim();

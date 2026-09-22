@@ -167,6 +167,15 @@ export const contactPage = defineType({
       validation: (Rule) => Rule.max(200),
     }),
     defineField({
+      name: "contactToEmail",
+      title: "Form recipient email (To)",
+      type: "string",
+      group: "form",
+      description: `Inbox that receives contact form submissions on the live site. Leave blank for ${settings.contact.contactEmail}. Edit this to test delivery on production (Publish after changing).`,
+      initialValue: settings.contact.contactEmail,
+      validation: (Rule) => Rule.email().max(160),
+    }),
+    defineField({
       name: "detailsTitle",
       title: "Details card title",
       type: "string",

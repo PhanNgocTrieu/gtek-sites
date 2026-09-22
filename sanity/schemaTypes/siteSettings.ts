@@ -100,10 +100,10 @@ export const siteSettings = defineType({
     }),
     defineField({
       name: "contactEmail",
-      title: "Contact form email",
+      title: "Contact form email (fallback)",
       type: "string",
       group: "contact",
-      description: "Receives contact form submissions (overrides environment fallback).",
+      description: `Prefer Contact → Form recipient email (To). Used only when that field is blank. Default: ${defaults.contact.contactEmail}.`,
       initialValue: defaults.contact.contactEmail,
       validation: (Rule) => Rule.email().max(160),
     }),

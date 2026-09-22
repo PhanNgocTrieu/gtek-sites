@@ -71,6 +71,8 @@ function mapDocToPaths(type?: string, slug?: string | null) {
       return ["/services", slug ? `/services/${slug}` : "/services"];
     case "aboutPage":
       return ["/about"];
+    case "contactPage":
+      return ["/contact"];
     default:
       return ["/"];
   }

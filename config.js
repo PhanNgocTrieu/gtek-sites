@@ -49,10 +49,13 @@ const config = {
       footerLogo: "/images/gtek-logo.png",
       footerEmail: "wayne.wong@gtekeng.com",
       footerLicenses: [
-        "M.Eng., P.Eng.",
-        "Licensed in MB, SK, BC",
-        "Canadian Geotechnical Society",
+        "Licenses & Affiliations",
         "Canadian Dam Association",
+        "Engineers Geoscientists Manitoba",
+        "Professional Engineers Ontario",
+        "Association of Professional Engineers & Geoscientists of Saskatchewan",
+        "Engineers Geoscientists British Columbia",
+        "United States Society on Dams",
       ],
       footerCopyright: "",
     },
@@ -69,9 +72,9 @@ const config = {
       description:
         "Geotechnical engineering grounded in experience. Winnipeg-based consultancy serving dam safety, mining, foundations, and slope stability across Canada.",
     },
-    heroHeadline: "Geotechnical engineering grounded in experience.",
+    heroHeadline: "Geotechnical (Soil) Engineering",
     heroSubhead:
-      "GTek Engineering is a Winnipeg-based geotechnical consultancy serving the dam safety, mining, foundation, and slope stability sectors across Canada.",
+      "GTek Engineering is a Winnipeg-based geotechnical consultancy providing engineering and materials testing services to support foundation assessment and design, slope stability evaluation and stabilization measures, dam design, and dam safety management across Canada and internationally",
     heroBackground: "/images/home-hero.jpg",
     heroCtaLabel: "Contact us",
     heroCtaHref: "/contact",
