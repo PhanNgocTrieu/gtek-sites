@@ -30,7 +30,6 @@ type ServiceGroupDoc = {
     | {
         title?: string | null;
         description?: string | null;
-        image?: string | null;
       }
     | null
   > | null;

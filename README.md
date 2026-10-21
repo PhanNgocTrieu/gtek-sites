@@ -209,7 +209,7 @@ On **Vercel** (or any host), set the same `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, 
 src/
   app/                 App Router pages, layouts, and API routes
     api/contact/       Contact form handler (Resend)
-    api/revalidate/    On-demand ISR revalidation
+    api/studio/        Studio on-demand revalidation (token + POST)
     api/webhooks/      Sanity publish webhook
     studio/            Embedded Sanity Studio route
   components/          Layout, UI, theme, and analytics components

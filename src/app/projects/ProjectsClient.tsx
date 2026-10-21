@@ -19,7 +19,6 @@ export type Project = {
   scope: string;
   attribution?: string;
   image?: string;
-  legacyCategory?: string;
 };
 
 const defaultCategories: Array<"All" | ProjectCategory> = [

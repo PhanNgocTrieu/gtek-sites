@@ -28,7 +28,6 @@ const PublishPane = (props: any) => {
 
   function computeRedirectPath(document: any) {
     const type = document?._type;
-    const slug = document?.slug?.current ?? document?.slug_current ?? null;
 
     switch (type) {
       case "homePage":
@@ -36,10 +35,10 @@ const PublishPane = (props: any) => {
         return "/";
       case "project":
       case "projectsPage":
-        return slug ? `/projects/${slug}` : "/projects";
+        return "/projects";
       case "service":
       case "servicesPage":
-        return slug ? `/services/${slug}` : "/services";
+        return "/services";
       case "aboutPage":
         return "/about";
       case "contactPage":

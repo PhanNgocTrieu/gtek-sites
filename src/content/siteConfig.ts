@@ -14,10 +14,6 @@ export function coalesceList<T>(value: T[] | null | undefined, fallback: T[]): T
   return Array.isArray(value) && value.length > 0 ? value : fallback;
 }
 
-export function coalesceBool(value: boolean | null | undefined, fallback: boolean): boolean {
-  return typeof value === "boolean" ? value : fallback;
-}
-
 /** Prefer a Sanity asset URL; otherwise a local path from config.js. Empty string means no image. */
 export function coalesceImage(
   sanityUrl: string | null | undefined,

@@ -135,8 +135,7 @@ export const projectsQuery = groq`*[_type == "project"]|order(sector asc, title 
   location,
   scope,
   attribution,
-  "image": mainImage.asset->url,
-  legacyCategory
+  "image": mainImage.asset->url
 }`;
 
 export const serviceGroupsQuery = groq`*[_type == "service"]|order(title asc){
@@ -144,7 +143,6 @@ export const serviceGroupsQuery = groq`*[_type == "service"]|order(title asc){
   "image": image.asset->url,
   items[]{
     title,
-    description,
-    "image": image.asset->url
+    description
   }
 }`;

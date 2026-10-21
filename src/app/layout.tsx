@@ -11,11 +11,6 @@ const geistSans = localFont({
   variable: "--font-geist-sans",
   weight: "100 900",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.settings.seo.canonical),
@@ -48,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50 text-slate-900 flex flex-col min-h-screen`}
+        className={`${geistSans.variable} antialiased bg-slate-50 text-slate-900 flex flex-col min-h-screen`}
       >
         <ThemeScript />
         <GoogleAnalytics />

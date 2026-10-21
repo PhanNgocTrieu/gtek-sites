@@ -56,19 +56,21 @@ function collectIdsFromBody(body: SanityWebhookBody): string[] {
   return Array.from(new Set(out.filter(Boolean)));
 }
 
-function mapDocToPaths(type?: string, slug?: string | null) {
+function mapDocToPaths(type?: string) {
   // Map Sanity document types to public paths that should be revalidated.
-  // Extend this mapping to match your site's routing.
+  // Site has list pages only (no /projects/[slug] or /services/[slug] routes).
   switch (type) {
     case "homePage":
     case "siteSettings":
       return ["/", "/about", "/contact", "/projects", "/services"];
     case "project":
     case "projects":
-      return ["/projects", slug ? `/projects/${slug}` : "/projects"];
+    case "projectsPage":
+      return ["/projects"];
     case "service":
     case "services":
-      return ["/services", slug ? `/services/${slug}` : "/services"];
+    case "servicesPage":
+      return ["/services"];
     case "aboutPage":
       return ["/about"];
     case "contactPage":
@@ -106,16 +108,11 @@ export async function POST(req: Request) {
 
     for (const id of ids) {
       try {
-        // fetch the document's type and slug (prefers draft or published)
-        const query = `*[_id in [$id, "drafts." + $id]][0]{_id, _type, slug}`;
-        const doc = await client.fetch<{ _id?: string; _type?: string; slug?: { current?: string } }>(
-          query,
-          { id },
-          {},
-        );
+        // fetch the document type (prefers draft or published)
+        const query = `*[_id in [$id, "drafts." + $id]][0]{_id, _type}`;
+        const doc = await client.fetch<{ _id?: string; _type?: string }>(query, { id }, {});
         const type = doc?._type;
-        const slug = doc?.slug?.current ?? null;
-        const mapped = mapDocToPaths(type, slug);
+        const mapped = mapDocToPaths(type);
         mapped.forEach((p) => paths.add(p));
       } catch {
         // best-effort: if we can't fetch the document, revalidate root
